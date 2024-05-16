@@ -38,7 +38,13 @@
     <img src="partage_readonly.png" alt="PartageRO" style="width: 800px;" />
 </p>
 <p align="center">
+    <img src="paratgeokRead.png" alt="PartageRO" style="width: 800px;" />
+</p>
+<p align="center">
     <img src="partage_write.png" alt="PartageRO" style="width: 800px;" />
+</p>
+<p align="center">
+    <img src="paratgeokWrite.png" alt="PartageRO" style="width: 800px;" />
 </p>
 
 ## Compte AD
