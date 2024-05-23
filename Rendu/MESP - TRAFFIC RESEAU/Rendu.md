@@ -66,7 +66,7 @@ Du point de vue de la sécurité, cette commande peut être utile dans plusieurs
 
 ``` Capturer une requête DNS et sa réponse ```
  <p align="center">
-    <img src="./RequeteDNS.pngpng" alt="PartageRO" style="width: 800px;" />
+    <img src="./RequeteDNS.png" alt="PartageRO" style="width: 800px;" />
 </p>
 
 ``` Qu’est-ce que le DNS Spoofing ? Comment s’en protéger ? ``` 
@@ -142,11 +142,16 @@ Il est important de noter que ces mesures ne garantissent pas une protection à 
 Une PKI (Public Key Infrastructure) est un système pour gérer les certificats numériques et le chiffrement à clé publique. Elle facilite le transfert sécurisé d’informations pour diverses activités réseau.
 
 ``` Capturer un mot de passe HTTP ou FTP ou Telnet (mettre en place les services si nécessaire) ``` 
+ <p align="center">
+    <img src="./capture_FTP.png" alt="PartageRO" style="width: 800px;" />
+</p>
 
-``` Comment mettre en place la confidentialité pour ce service ? ``` 
-
+```Comment mettre en place la confidentialité pour ce service ?``` 
+En mettant en place du chiffrement, en activant SSL/TLS et en utilisant des certificats pour le cryptage des données.
 ``` Capturer un handshake TLS ``` 
-
+ <p align="center">
+    <img src="CapturehandshakeTLS.png" style="width: 800px;" />
+</p>
 ``` Déchiffrer le trafic TLS avec votre certificat et/ou votre clé de session ``` 
 
 ``` Qu’est-ce qu’une autorité de certification (AC) racine ? Qu'est qu'une AC intermediaire ? ``` 
@@ -185,6 +190,10 @@ AC Intermédiaire : Émise par une AC racine, permettant une gestion flexible et
 La combinaison de ces AC assure une infrastructure sécurisée pour la gestion des identités et des communications sur les réseaux.
 
 ``` Connectez-vous sur https://taisen.fr et affichez la chaine de confiance du certificat ``` 
+
+ <p align="center">
+    <img src="./chainedeconfiance.png" alt="PartageRO" style="width: 500px;" />
+</p>
 
 ``` Capturer une authentification Kerberos (mettre en place le service si nécessaire)``` 
 
