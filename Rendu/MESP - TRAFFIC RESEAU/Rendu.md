@@ -257,7 +257,15 @@ Activer la signature SMB pour protéger l'intégrité des messages de négociati
 
 ``` Capturer une authentification SSH ou SFTP (mettre en place le service si nécessaire)``` 
 
+ <p align="center">
+    <img src="./Capture_SSH.png"  style="width: 500px;" />
+</p>
+
 ``` Intercepter un fichier au travers du protocole SMB ``` 
+
+<p align="center">
+    <img src="./Capture_SMB.png"  style="width: 500px;" />
+</p>
 
 ``` Comment proteger l'authenticité et la confidentialité d'un partage SMB ? ``` 
 
