@@ -23,7 +23,7 @@ Il vous est demandé de procéder à l'analyse des protocoles utilisés sur le r
 10.0.0.254
 
 <p align="center">
-    <img src="./arp.png" alt="PartageRO" style="width: 800px;" />
+    <img src="./arp.png"  style="width: 800px;" />
 </p>
 
 ## Questions
@@ -39,7 +39,7 @@ Il vous est demandé de procéder à l'analyse des protocoles utilisés sur le r
 
 ``` Capturer le processus DORA du protocole DHCP ``` 
 <p align="center">
-    <img src="./dora.png" alt="PartageRO" style="width: 800px;" />
+    <img src="./dora.png"  style="width: 800px;" />
 </p>
 
 ````Qu’est ce que le DHCP Starvation / snooping ? Rogue DHCP ?````
@@ -66,7 +66,7 @@ Du point de vue de la sécurité, cette commande peut être utile dans plusieurs
 
 ``` Capturer une requête DNS et sa réponse ```
  <p align="center">
-    <img src="./RequeteDNS.png" alt="PartageRO" style="width: 800px;" />
+    <img src="./RequeteDNS.png"  style="width: 800px;" />
 </p>
 
 ``` Qu’est-ce que le DNS Spoofing ? Comment s’en protéger ? ``` 
@@ -108,7 +108,7 @@ Ces protocoles visent à améliorer la sécurité et la confidentialité des uti
 ``` Capturer un flux HTTP ``` 
 
  <p align="center">
-    <img src="./RequeteHTTP.png" alt="PartageRO" style="width: 800px;" />
+    <img src="./RequeteHTTP.png"  style="width: 800px;" />
 </p>
 
 ``` Qu’est-ce que le HTTP Smuggling ? Donner un exemple de CVE ``` 
@@ -143,16 +143,24 @@ Une PKI (Public Key Infrastructure) est un système pour gérer les certificats 
 
 ``` Capturer un mot de passe HTTP ou FTP ou Telnet (mettre en place les services si nécessaire) ``` 
  <p align="center">
-    <img src="./capture_FTP.png" alt="PartageRO" style="width: 800px;" />
+    <img src="./capture_FTP.png"  style="width: 800px;" />
 </p>
 
 ```Comment mettre en place la confidentialité pour ce service ?``` 
+
 En mettant en place du chiffrement, en activant SSL/TLS et en utilisant des certificats pour le cryptage des données.
+
 ``` Capturer un handshake TLS ``` 
+
  <p align="center">
     <img src="CapturehandshakeTLS.png" style="width: 800px;" />
 </p>
+
 ``` Déchiffrer le trafic TLS avec votre certificat et/ou votre clé de session ``` 
+
+ <p align="center">
+    <img src="TLS_AVEC_CERTIF.png" style="width: 800px;" />
+</p>
 
 ``` Qu’est-ce qu’une autorité de certification (AC) racine ? Qu'est qu'une AC intermediaire ? ``` 
 
@@ -192,12 +200,20 @@ La combinaison de ces AC assure une infrastructure sécurisée pour la gestion d
 ``` Connectez-vous sur https://taisen.fr et affichez la chaine de confiance du certificat ``` 
 
  <p align="center">
-    <img src="./chainedeconfiance.png" alt="PartageRO" style="width: 500px;" />
+    <img src="./chainedeconfiance.png"  style="width: 500px;" />
 </p>
 
 ``` Capturer une authentification Kerberos (mettre en place le service si nécessaire)``` 
 
+ <p align="center">
+    <img src="./KERBEROS.png"  style="width: 500px;" />
+</p>
+
 ``` Capturer une authentification RDP (mettre en place le service si nécessaire)``` 
+
+ <p align="center">
+    <img src="./capture_RDP.png"  style="width: 500px;" />
+</p>
 
 ``` Quelles sont les attaques connues sur NetLM ?``` 
 
@@ -234,6 +250,10 @@ Configurer les systèmes pour refuser les versions antérieures à NTLMv2
 Activer la signature SMB pour protéger l'intégrité des messages de négociation
 
 ``` Capturer une authentification WinRM (Vous pouvez utiliser EvilWinRM si nécessaire côté client.)``` 
+
+ <p align="center">
+    <img src="./Capture_WINRM.png"  style="width: 500px;" />
+</p>
 
 ``` Capturer une authentification SSH ou SFTP (mettre en place le service si nécessaire)``` 
 
