@@ -282,3 +282,10 @@ Activer la signature SMB pour protéger l'intégrité des messages de négociati
 6. Mises à jour : Maintenez vos systèmes à jour avec les derniers correctifs de sécurité.
 
 7. Surveillance : Utilisez des outils de surveillance pour détecter les accès non autorisés.
+
+
+```Reconstituer un fichier qui à transité sur le réseau à l'aide de Wireshark ```
+
+<p align="center">
+    <img src="./Capture_fichier.png"  style="width: 500px;" />
+</p>
