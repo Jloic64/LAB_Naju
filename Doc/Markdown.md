@@ -17,9 +17,6 @@ L'extension d'un fichier markdown est `.md`.
 
 Les éléments de syntaxe qui suivent sont présentés en ordre alphabétique.
 
-Pour consulter la table des matières, appuyez sur l'icône suivante, en haut à droite de cette page :
-
- ![Markdown Logo](/media/toc.png)
 
 ### Blocs de citation
 
@@ -386,6 +383,8 @@ Ajoutez un carré / croissilon / dièse immédiatement après le lien du fichier
 - [markdownguide.org](https://www.markdownguide.org/tools/)
 - [StackEdit Online Markdown Editor](https://stackedit.io/)
 - [Tuto sous forme de jeux](https://www.markdowntutorial.com/fr/)
+- [Tuto IT-Connect](https://www.it-connect.fr/apprendre-a-ecrire-en-markdown/)
+
 ## Références
 
 [^1]:https://google.com
