@@ -287,5 +287,5 @@ Activer la signature SMB pour protéger l'intégrité des messages de négociati
 ```Reconstituer un fichier qui à transité sur le réseau à l'aide de Wireshark ```
 
 <p align="center">
-    <img src="./Capture_fichier.png"  style="width: 500px;" />
+    <img src="./Capture_fichier.png"  style="width: 800px;" />
 </p>
