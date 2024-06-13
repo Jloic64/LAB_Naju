@@ -16,8 +16,6 @@ A l'aide d'un script dans le langage de votre choix
 * Afficher la liste des IP équipements réseaux traversés pour atteindre le site Web
 
 
-#### Powershell
-
 ```
 # Définir l'URL par défaut
 $url = "https://taisen.fr"
@@ -28,21 +26,53 @@ $response = Invoke-WebRequest -Uri $url
 # Vérifier si la requête a réussi
 if ($response.StatusCode -eq 200) {
     Write-Host "Requête réussie, Bravo BG!"
-    Write-Host "Contenu de la réponse:"
-    Write-Host $response.Content
+    
+    # Extraire les balises HTML et les stocker dans un tableau
+    $htmlContent = $response.Content
+    $regex = '<([a-z]+)(?:\s+[^>]*)?>'
+    $tagsArray = [regex]::Matches($htmlContent, $regex) | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique
+
+    # Afficher les balises HTML
+    Write-Host "`nBalises HTML trouvées:"
+    $tagsArray | ForEach-Object { Write-Host $_ }
+    
 } else {
     Write-Host "Erreur lors de la requête, tu es une M... Code de statut:" $response.StatusCode
 }
 
 # Afficher les en-têtes de la réponse
 Write-Host "`nEn-têtes de la réponse:"
-$response.Headers
+
+# Table de correspondance des en-têtes connus et leurs descriptions
+$headersDescriptions = @{
+    "Content-Type" = "Indique le type de contenu de la ressource."
+    "Content-Length" = "Indique la taille du corps de la réponse, en octets."
+    "Date" = "La date et l'heure à laquelle le message a été envoyé."
+    "Server" = "Indique le logiciel de serveur HTTP utilisé."
+    "Cache-Control" = "Directive pour le cache du navigateur ou autre cache intermédiaire."
+    "Expires" = "Date et heure après laquelle la réponse est considérée comme périmée."
+    "Last-Modified" = "La date et l'heure de la dernière modification de la ressource."
+    "Set-Cookie" = "Utilisé pour envoyer un cookie du serveur au client."
+}
+
+# Parcourir les en-têtes et afficher leur description si connue
+$response.Headers.GetEnumerator() | ForEach-Object {
+    $headerName = $_.Name
+    $headerValue = $_.Value
+    Write-Host "$($headerName): $($headerValue)"
+    
+    if ($headerName -and $headersDescriptions.ContainsKey($headerName)) {
+        Write-Host "  Utilité: $($headersDescriptions[$headerName])"
+    } else {
+        Write-Host "  Utilité: Non documentée."
+    }
+}
 
 # Récupérer l'adresse IP et le serveur DNS
 $hostname = ([System.Uri]$url).Host
 $dnsInfo = Resolve-DnsName -Name $hostname
 
-# Afficher l'adresse IP et le serveur DNS
+# Afficher l'adresse IP résolue et le serveur DNS utilisé
 Write-Host "`nAdresse IP résolue:"
 $dnsInfo | ForEach-Object {
     if ($_.QueryType -eq "A") {
@@ -57,11 +87,41 @@ $dnsInfo | ForEach-Object {
     }
 }
 
-# Afficher l'IP et le port source des connexions réseau actives
-Write-Host "`nConnexions réseau actives (IP et port source) :"
-Get-NetTCPConnection | Select-Object LocalAddress, LocalPort | Format-Table -AutoSize
-
-# Afficher l'IP et le port source et destination des connexions réseau actives
+# Afficher les connexions réseau actives
 Write-Host "`nConnexions réseau actives (IP et port source et destination) :"
 Get-NetTCPConnection | Select-Object LocalAddress, LocalPort, RemoteAddress, RemotePort | Format-Table -AutoSize
 
+# Afficher la liste des IP en IPV4 des équipements réseaux traversés pour atteindre le site Web
+Write-Host "`nTraceroute vers le site Web:"
+$tracerouteResults = Test-NetConnection -ComputerName $hostname -Traceroute
+$tracerouteResults.Traceroute | ForEach-Object {
+    if ($_.Ipv4Address) {
+        Write-Host $_.Ipv4Address
+    }
+}
+
+#Créer une requête Web
+$request = [System.Net.HttpWebRequest]::Create($url)
+$request.Method = "GET"
+$request.AllowAutoRedirect = $false
+
+#Faire la requête et obtenir la réponse
+try {
+    $response = $request.GetResponse()
+    $response.Close()
+} catch [System.Net.WebException] {
+    $response = $_.Exception.Response
+}
+
+#Obtenir le certificat
+$certificate = $request.ServicePoint.Certificate
+
+#Convertir le certificat en un objet X509Certificate2 pour obtenir plus d'informations
+$cert2 = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 $certificate
+
+#Afficher les informations du certificat
+Write-Output "Subject: $($cert2.Subject)"
+Write-Output "Issuer: $($cert2.Issuer)"
+Write-Output "Valid From: $($cert2.NotBefore)"
+Write-Output "Valid Until: $($cert2.NotAfter)"
+Write-Output "Thumbprint: $($cert2.Thumbprint)"
