@@ -34,9 +34,6 @@ if ($response.StatusCode -eq 200) {
     Write-Host "Erreur lors de la requête, tu es une M... Code de statut:" $response.StatusCode
 }
 
-
-
-
 # Afficher les en-têtes de la réponse
 Write-Host "`nEn-têtes de la réponse:"
 $response.Headers
@@ -59,3 +56,12 @@ $dnsInfo | ForEach-Object {
         Write-Host $_.NameHost
     }
 }
+
+# Afficher l'IP et le port source des connexions réseau actives
+Write-Host "`nConnexions réseau actives (IP et port source) :"
+Get-NetTCPConnection | Select-Object LocalAddress, LocalPort | Format-Table -AutoSize
+
+# Afficher l'IP et le port source et destination des connexions réseau actives
+Write-Host "`nConnexions réseau actives (IP et port source et destination) :"
+Get-NetTCPConnection | Select-Object LocalAddress, LocalPort, RemoteAddress, RemotePort | Format-Table -AutoSize
+
