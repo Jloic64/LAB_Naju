@@ -91,7 +91,7 @@ $dnsInfo | ForEach-Object {
 Write-Host "`nConnexions réseau actives (IP et port source et destination) :"
 Get-NetTCPConnection | Select-Object LocalAddress, LocalPort, RemoteAddress, RemotePort | Format-Table -AutoSize
 
-# Afficher la liste des IP en IPV4 des équipements réseaux traversés pour atteindre le site Web
+# Afficher la liste des IP des équipements réseaux traversés pour atteindre le site Web
 Write-Host "`nTraceroute vers le site Web:"
 $tracerouteResults = Test-NetConnection -ComputerName $hostname -Traceroute
 $tracerouteResults.Traceroute | ForEach-Object {
