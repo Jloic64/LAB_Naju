@@ -120,8 +120,8 @@ $certificate = $request.ServicePoint.Certificate
 $cert2 = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 $certificate
 
 #Afficher les informations du certificat
-Write-Output "Subject: $($cert2.Subject)"
+Write-Output "Sujet: $($cert2.Subject)"
 Write-Output "Issuer: $($cert2.Issuer)"
-Write-Output "Valid From: $($cert2.NotBefore)"
-Write-Output "Valid Until: $($cert2.NotAfter)"
+Write-Output "Valide depuis: $($cert2.NotBefore)"
+Write-Output "Valide jusqu'a : $($cert2.NotAfter)"
 Write-Output "Thumbprint: $($cert2.Thumbprint)"
