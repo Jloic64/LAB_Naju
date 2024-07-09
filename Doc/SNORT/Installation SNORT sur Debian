@@ -1,62 +1,66 @@
 <p align="center">
     <img src="snort.jpg" alt="PartageRO" style="width: 400px;" />
 </p>
-# Installation de Snort 3
 
-## Étape 1 : Mise à jour du système
-Avant de commencer, il est important de mettre à jour votre système. Exécutez les commandes suivantes dans le terminal :
-```bash
-sudo apt update
-sudo apt upgrade
-```
+# Tutoriel d'installation de Snort et Libdaq
 
-## Étape 2 : Installation des dépendances
-Snort a besoin de plusieurs dépendances pour fonctionner correctement. Vous pouvez les installer avec la commande suivante :
-```bash
-sudo apt install cmake libdaq-dev libdumbnet-dev flex g++ libhwloc-dev libluajit-5.1-dev libssl-dev libpcap-dev libpcre3-dev zlib1g-dev pkg-config
-```
+## Étape 1 : Mise à jour des paquets de base
+Ouvrez un terminal et exécutez les commandes suivantes pour mettre à jour vos paquets de base :
 
-## Étape 3 : Installation de git et de build-essential, et téléchargement du code source
-Avant de télécharger le code source de Snort, vous devez vous assurer que git et build-essential sont installés sur votre système. Si ce n'est pas le cas, vous pouvez les installer en utilisant les commandes suivantes :
-```bash
-sudo apt install git
-sudo apt install build-essential
-```
-Une fois git et build-essential installés, vous pouvez télécharger le code source de Snort 3 à partir du dépôt GitHub avec la commande suivante :
-```bash
-git clone https://github.com/snort3/snort3.git
-```
+```apt update apt upgrade```
 
-## Étape 4 : Configuration de Snort
-Une fois que vous avez cloné le dépôt, naviguez vers le répertoire `snort3` et exécutez le script `configure_cmake.sh` :
-```bash
-cd snort3
-./configure_cmake.sh --prefix=/usr/local --enable-tcmalloc
-```
-L'option `--prefix=/usr/local` spécifie le répertoire d'installation de Snort, et `--enable-tcmalloc` active l'utilisation de tcmalloc pour la gestion de la mémoire.
 
-## Étape 5 : Compilation de Snort
-Ensuite, compilez Snort avec la commande `make` :
-```bash
-make -j$(nproc)
-```
-L'option `-j$(nproc)` permet de compiler en parallèle, ce qui peut accélérer le processus de compilation.
+## Étape 2 : Installation des paquets requis
+Installez les paquets nécessaires avec la commande suivante :
 
-## Étape 6 : Installation de Snort
-Enfin, installez Snort avec la commande `make install` :
-```bash
-sudo make install
-```
+```apt install -y build-essential autotools-dev libpcre3 libpcre3-dev libpcap-dev libdumbnet-dev bison flex zlib1g-dev liblzma-dev libssl-dev pkg-config hwloc libhwloc-dev cmake git sudo apt install libluajit-5.1-dev```
 
-## Étape 7 : Mise à jour des bibliothèques partagées
-Après l'installation, vous devez mettre à jour les bibliothèques partagées avec la commande suivante :
-```bash
-sudo ldconfig
-```
 
-## Étape 8 : Vérification de l'installation
-Vous pouvez vérifier que Snort a été installé correctement en exécutant la commande suivante :
-```bash
-snort -V
-```
-Cette commande affiche la version de Snort, ce qui indique que l'installation a réussi si la version est affichée.
+## Étape 3 : Installation et configuration de Libdaq
+Clonez le dépôt Libdaq, configurez-le et installez-le en utilisant les commandes suivantes :
+
+```cd /root git clone https://github.com/snort3/libdaq.git cd libdaq ./bootstrap ./configure make sudo make install```
+
+## Étape 4 : Installation de Snort
+Clonez le dépôt Snort et configurez-le en utilisant les commandes suivantes :
+
+```git clone https://github.com/snort3/snort3.git cd /root/snort3 ./configure_cmake.sh```
+
+
+## Étape 5 : Définir les chemins des bibliothèques 
+Définissez les chemins des bibliothèques en utilisant les commandes suivantes :
+
+```export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH```
+
+
+## Étape 6 : Configuration finale
+Configurez et construisez Snort en utilisant les commandes suivantes :
+
+``` cd /root/snort3/build cmake … make ```
+
+
+## Étape 7 : Vérification de la configuration
+Vérifiez que Snort est correctement installé en utilisant les commandes suivantes :
+
+```ls /usr/local/bin/snort```
+
+Si la commande précédente ne renvoie rien, essayez celle-ci :
+
+```ls /root/snort3/build/src/snort```
+
+
+## Étape 8 : Fin
+Installez Snort et vérifiez sa version en utilisant les commandes suivantes :
+
+```sudo make install snort -V```
+
+
+Et voilà, vous avez installé Snort et Libdaq sur votre système !
+
+Pour plus d'informations, vous pouvez consulter les dépôts GitHub de Snort et de Libdaq.
+
+Sources :
+
+[GitHub - snort3/snort3: Snort++](https://github.com/snort3/snort3)
+
+[Github - snort3/libdaq: Libdaq ](https://github.com/snort3/libdaq)
