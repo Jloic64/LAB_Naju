@@ -10,7 +10,6 @@ Ouvrez un terminal et exécutez les commandes suivantes pour mettre à jour vos 
 apt update && apt upgrade -y
 ```
 
-
 ## Étape 2 : Installation des paquets requis
 Installez les paquets nécessaires avec la commande suivante :
 
@@ -20,9 +19,22 @@ apt install -y build-essential autotools-dev libpcre3 libpcre3-dev libpcap-dev l
 ```bash
  apt install libluajit-5.1-dev
 ```
+## Étape 3 : Installation de Snort
+Clonez le dépôt Snort et configurez-le en utilisant les commandes suivantes :
 
+```bash
+git clone https://github.com/snort3/snort3.git 
+```
 
-## Étape 3 : Installation et configuration de Libdaq
+```bash
+cd /root/snort3
+```
+
+```bash
+mkdir build
+```
+
+## Étape 4 : Installation et configuration de Libdaq
 Clonez le dépôt Libdaq, configurez-le et installez-le en utilisant les commandes suivantes :
 
 ```bash
@@ -47,23 +59,6 @@ cd /root
 ```bash
 make install
 ```
-
-
-## Étape 4 : Installation de Snort
-Clonez le dépôt Snort et configurez-le en utilisant les commandes suivantes :
-
-```bash
-git clone https://github.com/snort3/snort3.git 
-```
-
-```bash
-cd /root/snort3
-```
-
-```bash
- ./configure_cmake.sh
-```
-
 
 ## Étape 5 : Définir les chemins des bibliothèques 
 Définissez les chemins des bibliothèques en utilisant les commandes suivantes :
@@ -116,7 +111,10 @@ sudo make install
 ```bash 
 snort -V
 ```
-
+<p align="center">
+    <img src="finsnort.jpg" alt="PartageRO" style="width: 400px;" />
+</p>
+<h1 align="center">Tutoriel d'installation de Snort</h1>
 
 Et voilà, vous avez installé Snort et Libdaq sur votre système !
 
