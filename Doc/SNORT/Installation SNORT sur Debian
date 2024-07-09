@@ -1,0 +1,62 @@
+<p align="center">
+    <img src="snort.jpg" alt="PartageRO" style="width: 400px;" />
+</p>
+# Installation de Snort 3
+
+## Étape 1 : Mise à jour du système
+Avant de commencer, il est important de mettre à jour votre système. Exécutez les commandes suivantes dans le terminal :
+```bash
+sudo apt update
+sudo apt upgrade
+```
+
+## Étape 2 : Installation des dépendances
+Snort a besoin de plusieurs dépendances pour fonctionner correctement. Vous pouvez les installer avec la commande suivante :
+```bash
+sudo apt install cmake libdaq-dev libdumbnet-dev flex g++ libhwloc-dev libluajit-5.1-dev libssl-dev libpcap-dev libpcre3-dev zlib1g-dev pkg-config
+```
+
+## Étape 3 : Installation de git et de build-essential, et téléchargement du code source
+Avant de télécharger le code source de Snort, vous devez vous assurer que git et build-essential sont installés sur votre système. Si ce n'est pas le cas, vous pouvez les installer en utilisant les commandes suivantes :
+```bash
+sudo apt install git
+sudo apt install build-essential
+```
+Une fois git et build-essential installés, vous pouvez télécharger le code source de Snort 3 à partir du dépôt GitHub avec la commande suivante :
+```bash
+git clone https://github.com/snort3/snort3.git
+```
+
+## Étape 4 : Configuration de Snort
+Une fois que vous avez cloné le dépôt, naviguez vers le répertoire `snort3` et exécutez le script `configure_cmake.sh` :
+```bash
+cd snort3
+./configure_cmake.sh --prefix=/usr/local --enable-tcmalloc
+```
+L'option `--prefix=/usr/local` spécifie le répertoire d'installation de Snort, et `--enable-tcmalloc` active l'utilisation de tcmalloc pour la gestion de la mémoire.
+
+## Étape 5 : Compilation de Snort
+Ensuite, compilez Snort avec la commande `make` :
+```bash
+make -j$(nproc)
+```
+L'option `-j$(nproc)` permet de compiler en parallèle, ce qui peut accélérer le processus de compilation.
+
+## Étape 6 : Installation de Snort
+Enfin, installez Snort avec la commande `make install` :
+```bash
+sudo make install
+```
+
+## Étape 7 : Mise à jour des bibliothèques partagées
+Après l'installation, vous devez mettre à jour les bibliothèques partagées avec la commande suivante :
+```bash
+sudo ldconfig
+```
+
+## Étape 8 : Vérification de l'installation
+Vous pouvez vérifier que Snort a été installé correctement en exécutant la commande suivante :
+```bash
+snort -V
+```
+Cette commande affiche la version de Snort, ce qui indique que l'installation a réussi si la version est affichée.
