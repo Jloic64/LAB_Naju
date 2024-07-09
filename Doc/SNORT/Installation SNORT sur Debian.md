@@ -12,30 +12,50 @@ Ouvrez un terminal et exécutez les commandes suivantes pour mettre à jour vos 
 ## Étape 2 : Installation des paquets requis
 Installez les paquets nécessaires avec la commande suivante :
 
-```apt install -y build-essential autotools-dev libpcre3 libpcre3-dev libpcap-dev libdumbnet-dev bison flex zlib1g-dev liblzma-dev libssl-dev pkg-config hwloc libhwloc-dev cmake git sudo apt install libluajit-5.1-dev```
+```apt install -y build-essential autotools-dev libpcre3 libpcre3-dev libpcap-dev libdumbnet-dev bison flex zlib1g-dev liblzma-dev libssl-dev pkg-config hwloc libhwloc-dev cmake git ```
+```apt install libluajit-5.1-dev```
 
 
 ## Étape 3 : Installation et configuration de Libdaq
 Clonez le dépôt Libdaq, configurez-le et installez-le en utilisant les commandes suivantes :
 
-```cd /root git clone https://github.com/snort3/libdaq.git cd libdaq ./bootstrap ./configure make sudo make install```
+```cd /root```
+
+``` git clone https://github.com/snort3/libdaq.git```
+
+``` cd libdaq ```
+
+```./bootstrap ```
+
+```./configure make sudo make install```
+
 
 ## Étape 4 : Installation de Snort
 Clonez le dépôt Snort et configurez-le en utilisant les commandes suivantes :
 
-```git clone https://github.com/snort3/snort3.git cd /root/snort3 ./configure_cmake.sh```
+```git clone https://github.com/snort3/snort3.git ```
+
+```cd /root/snort3```
+
+``` ./configure_cmake.sh```
 
 
 ## Étape 5 : Définir les chemins des bibliothèques 
 Définissez les chemins des bibliothèques en utilisant les commandes suivantes :
 
-```export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH```
+```export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH ```
+
+```export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH```
 
 
 ## Étape 6 : Configuration finale
 Configurez et construisez Snort en utilisant les commandes suivantes :
 
-``` cd /root/snort3/build cmake … make ```
+``` cd /root/snort3/build ```
+
+```cmake … ``` 
+
+```make ```
 
 
 ## Étape 7 : Vérification de la configuration
@@ -51,7 +71,8 @@ Si la commande précédente ne renvoie rien, essayez celle-ci :
 ## Étape 8 : Fin
 Installez Snort et vérifiez sa version en utilisant les commandes suivantes :
 
-```sudo make install snort -V```
+```sudo make install ```
+```snort -V```
 
 
 Et voilà, vous avez installé Snort et Libdaq sur votre système !
