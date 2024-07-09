@@ -1,7 +1,7 @@
 <p align="center">
     <img src="snort.jpg" alt="PartageRO" style="width: 400px;" />
 </p>
-# <h1 align="center">Tutoriel d'installation de Snort</h1>
+<h1 align="center">Tutoriel d'installation de Snort</h1>
  
 ## Étape 1 : Mise à jour des paquets de base
 Ouvrez un terminal et exécutez les commandes suivantes pour mettre à jour vos paquets de base :
