@@ -7,7 +7,7 @@
 Ouvrez un terminal et exécutez les commandes suivantes pour mettre à jour vos paquets de base :
 
 ```bash 
-apt update apt upgrade
+apt update && apt upgrade -y
 ```
 
 
