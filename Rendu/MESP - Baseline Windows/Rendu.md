@@ -21,7 +21,7 @@ auditpol /list /subcategory:*
 auditpol /set /category:"Connexion de compte" /failure:enable
 ```
 <p align="center">
-    <img src="connexion.png" alt="PartageRO" style="width: 800px;" />
+    <img src="Connexion.png" style="width: 800px;" />
 </p>
 
 ```Powershell

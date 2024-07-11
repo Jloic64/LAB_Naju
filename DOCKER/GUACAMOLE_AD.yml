@@ -1,0 +1,84 @@
+# Compose pour guacamole avec option d'authentification à 2 facteurs et enregistrements des connexions en video et identification via l'AD
+# Ajouter l'extension LDAP à Guacamole
+# Apache Guacamole prend en charge l'authentification LDAP via une extension. Vous devez ajouter cette extension à votre instance Docker de Guacamole.
+
+# Télécharger l'extension LDAP :
+
+#Téléchargez le fichier guacamole-auth-ldap-*.jar correspondant à la version de Guacamole que vous utilisez. Vous pouvez le trouver sur le site officiel de Guacamole ou dans le package Guacamole.
+# Par exemple, si vous utilisez Guacamole version 1.5.0, téléchargez le fichier guacamole-auth-ldap-1.5.0.jar.
+# Placer l'extension dans le volume Guacamole :
+
+#Copiez le fichier .jar dans le répertoire /home/docker/appdata/guacamole/guacamole_home/extensions sur votre hôte Docker.
+
+
+version: "3.9"
+
+networks:
+  guacamole:
+    name: guacamole_net
+  guacamole_db:
+    name: guacamole_db_net
+
+services:
+  guacamole: 
+    image: guacamole/guacamole
+    container_name: guacamole
+    environment:
+      GUACD_HOSTNAME: guacd
+      MYSQL_HOSTNAME: guacamole_db
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_user
+      MYSQL_PASSWORD: Axbioinfo40#
+      TOTP_ENABLED: 'true'
+      GUACAMOLE_HOME: /guacamole/guacamole_home
+      GUACAMOLE_LOG_LEVEL: info
+      GUACAMOLE_RECORDINGS_DIR: /guacamole/guacamole_home/recordings
+      GUACAMOLE_RECORDING_NAME_TEMPLATE: "%e-%s"
+      GUACAMOLE_RECORDING_INPUT_METHOD: ffmpeg
+      GUACAMOLE_RECORDING_OUTPUT_FORMAT: m4v
+      GUACAMOLE_RECORDING_METADATA: on
+      GUACAMOLE_SKIP_IF_UNAVAILABLE: mysql
+      LDAP_HOSTNAME: "ldap.example.com"
+      LDAP_PORT: "389"
+      LDAP_USER_BASE_DN: "ou=users,dc=example,dc=com"
+      LDAP_USERNAME_ATTRIBUTE: "sAMAccountName"
+      LDAP_CONFIG_BASE_DN: "ou=groups,dc=example,dc=com"
+      LDAP_GROUP_BASE_DN: "ou=groups,dc=example,dc=com"
+      LDAP_SEARCH_BIND_DN: "cn=admin,dc=example,dc=com"
+      LDAP_SEARCH_BIND_PASSWORD: "password"
+    depends_on:
+      - guacd
+      - guacamole_db
+    ports:
+      - 8888:8080/tcp
+    restart: unless-stopped
+    volumes:
+      - /home/docker/appdata/guacamole/guacamole_home:/guacamole/guacamole_home
+      - /home/docker/appdata/guacamole/recordings:/guacamole/guacamole_home/recordings
+    networks:
+      - guacamole
+      - guacamole_db
+      
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    volumes:
+      - /home/docker/appdata/guacamole/drive:/drive:rw
+    restart: unless-stopped
+    networks:
+      - guacamole
+
+  guacamole_db:
+    image: mariadb:10.5.8
+    container_name: guacamole_db
+    environment:
+      MYSQL_ROOT_PASSWORD: Axbioinfo40#
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_user
+      MYSQL_PASSWORD: Axbioinfo40#
+    volumes:
+      - /home/docker/appdata/guacamole/init:/docker-entrypoint-initdb.d:z
+      - /home/docker/appdata/guacamole/data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - guacamole_db

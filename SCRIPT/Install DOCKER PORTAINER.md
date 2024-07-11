@@ -11,7 +11,7 @@ Remplacer <Votre_IP> par l'adresse IP réelle de votre serveur Debian lorsque vo
 #
 
 
-```
+``` bash
 #!/bin/bash
 # Shebang. Il indique au système d'exploitation que ce script doit être exécuté avec /bin/bash.
 
