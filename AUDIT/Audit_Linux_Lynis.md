@@ -712,8 +712,8 @@ Si vous avez besoin d'aide supplémentaire, n'hésitez pas à demander !
 
 
 
-**Fait à Bayonne, le 11/09/2024**
+***Fait à Bayonne, le 11/09/2024***
 
-**Auditeurs : Michael Bousquet & Loïc Join**
+***Auditeurs : Michael Bousquet & Loïc Join***
 
 
