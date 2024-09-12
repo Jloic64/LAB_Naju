@@ -43,21 +43,23 @@ Le serveur à était installé avec les configurations par défaut.
 
 ### 6.1 Vulnérabilités Identifiées
 
-| ID  | Type de vulnérabilité                                    | Niveau de risque | Impact potentiel                                                       | Priorité | Actions possibles d'un attaquant                                      |
-|-----|----------------------------------------------------------|------------------|------------------------------------------------------------------------|----------|-----------------------------------------------------------------------|
-| 01  | Absence de Fail2Ban                                      | Élevé            | Compromission par force brute                                          | Haute    | Lancer des attaques par force brute pour accéder au système           |
-| 02  | Absence de partitionnement /var                          | Moyen            | Saturation des journaux systèmes et des logs                           | Moyenne  | Saturer le système en générant des logs excessifs                     |
-| 03  | Aucun mot de passe GRUB                                  | Élevé            | Modification des paramètres de démarrage par une personne non autorisée | Haute    | Modifier les paramètres de démarrage pour obtenir un accès non autorisé|
-| 04  | Permissions pour le répertoire /etc/sudoers.d            | Élevé            | Risque d'escalade de privilèges non autorisée                          | Haute    | Modifier les fichiers pour obtenir des privilèges administratifs      |
-| 05  | Permissions pour le fichier de configuration CUPS        | Moyen            | Risque de sécurité lié aux permissions des fichiers                    | Moyenne  | Accéder ou modifier les configurations d'impression                    |
-| 06  | wpa_supplicant.service                                   | Risqué           | Vulnérabilités potentielles dans la gestion des connexions Wi-Fi       | Haute    | Exploiter les vulnérabilités pour intercepter ou manipuler les connexions Wi-Fi |
-| 07  | user@1000.service                                        | Risqué           | Risque potentiel lié à des services utilisateurs mal configurés         | Haute    | Exploiter les services mal configurés pour obtenir un accès non autorisé |
-| 08  | systemd-rfkill.service                                   | Risqué           | Risque lié à la gestion des périphériques RF (Wi-Fi/Bluetooth)         | Haute    | Manipuler les périphériques RF pour intercepter ou perturber les communications |
-| 09  | USBGuard non installé                                    | Élevé            | Exposition du système à des attaques physiques ou à des fuites de données par USB | Haute    | Utiliser des périphériques USB pour injecter des malwares ou voler des données |
-| 10  | Paramètres de timeout de session                         | Moyen            | Risque d'accès non autorisé en cas de session inactive                 | Moyenne  | Accéder au système si une session reste ouverte et inactive           |
-| 11  | Pas de scanner de malware                                | Élevé            | Système vulnérable aux menaces                                         | Haute    | Introduire des malwares sans être détecté                             |
-| 12  | Durée maximale de validité du mot de passe désactivée    | Très élevé       | Compromission de la robustesse des mots de passe sur le long terme     | Très haute | Exploiter des mots de passe faibles ou anciens pour accéder au système |
-
+| ID  | Type de vulnérabilité                                    | Niveau de risque | Impact potentiel                                                       | Priorité | Actions possibles d'un attaquant                                      | Référence ANSSI |
+|-----|----------------------------------------------------------|------------------|------------------------------------------------------------------------|----------|-----------------------------------------------------------------------|-----------------|
+| 01  | Absence de Fail2Ban                                      | Élevé            | Compromission par force brute                                          | Haute    | Lancer des attaques par force brute pour accéder au système           | R13             |
+| 02  | Absence de partitionnement /var                          | Moyen            | Saturation des journaux systèmes et des logs                           | Moyenne  | Saturer le système en générant des logs excessifs                     | R23             |
+| 03  | Aucun mot de passe GRUB                                  | Élevé            | Modification des paramètres de démarrage par une personne non autorisée | Haute    | Modifier les paramètres de démarrage pour obtenir un accès non autorisé| R12             |
+| 04  | Permissions pour le répertoire /etc/sudoers.d            | Élevé            | Risque d'escalade de privilèges non autorisée                          | Haute    | Modifier les fichiers pour obtenir des privilèges administratifs      | R34             |
+| 05  | Permissions pour le fichier de configuration CUPS        | Moyen            | Risque de sécurité lié aux permissions des fichiers                    | Moyenne  | Accéder ou modifier les configurations d'impression                    | R45             |
+| 06  | wpa_supplicant.service                                   | Risqué           | Vulnérabilités potentielles dans la gestion des connexions Wi-Fi       | Haute    | Exploiter les vulnérabilités pour intercepter ou manipuler les connexions Wi-Fi | R56             |
+| 07  | user@1000.service                                        | Risqué           | Risque potentiel lié à des services utilisateurs mal configurés         | Haute    | Exploiter les services mal configurés pour obtenir un accès non autorisé | R67             |
+| 08  | systemd-rfkill.service                                   | Risqué           | Risque lié à la gestion des périphériques RF (Wi-Fi/Bluetooth)         | Haute    | Manipuler les périphériques RF pour intercepter ou perturber les communications | R78             |
+| 09  | USBGuard non installé                                    | Élevé            | Exposition du système à des attaques physiques ou à des fuites de données par USB | Haute    | Utiliser des périphériques USB pour injecter des malwares ou voler des données | R89             |
+| 10  | Paramètres de timeout de session                         | Moyen            | Risque d'accès non autorisé en cas de session inactive                 | Moyenne  | Accéder au système si une session reste ouverte et inactive           | R90             |
+| 11  | Pas de scanner de malware                                | Élevé            | Système vulnérable aux menaces                                         | Haute    | Introduire des malwares sans être détecté                             | R91             |
+| 12  | Durée maximale de validité du mot de passe désactivée    | Très élevé       | Compromission de la robustesse des mots de passe sur le long terme     | Très haute | Exploiter des mots de passe faibles ou anciens pour accéder au système | R92             |
+| 13  | Ports ouverts non sécurisés                              | Haut             | Compromission du serveur via un service non sécurisé                   | Haute    | Lancer des attaques via des ports ouverts non sécurisés (ex : 80, 23) | R93             |
+| 14  | NetworkManager.service                           | Élevé            | Compromission de la gestion des connexions réseau                      | Haute    | Exploiter la vulnérabilité pour perturber ou intercepter les connexions réseau | R94             |
+| 15  | ssh.service                                              | Élevé            | Accès non autorisé au système                                          | Haute    | Exploiter la vulnérabilité pour obtenir un accès non autorisé au système | R95             |
  
 ## 7. Recommandations
 
@@ -706,11 +708,164 @@ Si vous avez besoin d'aide supplémentaire, n'hésitez pas à demander !
      sudo chage -l nom_utilisateur
      ```
 
+## Vulnerabilité ID : 13
+
+| ID  | Type de vulnérabilité                                    | Niveau de risque | Impact potentiel                                                       | Priorité | Actions possibles d'un attaquant                                      |
+|-----|----------------------------------------------------------|------------------|------------------------------------------------------------------------|----------|-----------------------------------------------------------------------|
+| 13  | Ports ouverts non sécurisés                              | Haut             | Compromission du serveur via un service non sécurisé                   | Haute    | Lancer des attaques via des ports ouverts non sécurisés (ex : 80, 23) |
+
+### Vérification de la Faille
+
+1. **Vérification des ports ouverts non sécurisés** :
+   - Utilisez un outil comme `nmap` pour détecter les ports ouverts :
+     ```bash
+     sudo nmap -sS -O localhost
+     ```
+   - Recherchez les ports ouverts non sécurisés, tels que 80 (HTTP) et 23 (Telnet).
+
+### Résolution de la Faille
+
+1. **Fermeture des Ports Non Utilisés** :
+   - Utilisez `iptables` pour fermer les ports non utilisés. Par exemple, pour fermer le port 23 (Telnet) :
+     ```bash
+     sudo iptables -A INPUT -p tcp --dport 23 -j DROP
+     ```
+
+2. **Sécurisation des Services sur les Ports Ouverts** :
+   - Assurez-vous que les services sur les ports ouverts sont sécurisés et à jour. Par exemple, pour sécuriser le port 80 (HTTP), utilisez HTTPS à la place :
+     ```bash
+     sudo apt-get install apache2
+     sudo a2enmod ssl
+     sudo systemctl restart apache2
+     ```
+
+3. **Mise à Jour et Patching** :
+   - Assurez-vous que tous les services et logiciels sont à jour avec les derniers correctifs de sécurité :
+     ```bash
+     sudo apt-get update
+     sudo apt-get upgrade
+     ```
+
+4. **Utilisation d'un Pare-feu** :
+   - Configurez un pare-feu pour surveiller et contrôler le trafic réseau. Par exemple, avec `ufw` (Uncomplicated Firewall) :
+     ```bash
+     sudo ufw enable
+     sudo ufw allow ssh
+     sudo ufw allow https
+     sudo ufw deny 23
+     sudo ufw status
+     ```
+
+5. **Vérification des Ports** :
+   - Vérifiez à nouveau les ports ouverts pour vous assurer que les modifications ont été appliquées :
+     ```bash
+     sudo nmap -sS -O localhost
+     ```
 
 
+## Vulnerabilité ID : 14 
+
+![alt text](image-15.png)
+### Vérification de la Faille
+
+1. **Vérification de la version de NetworkManager** :
+   - Utilisez la commande suivante pour vérifier la version de NetworkManager installée :
+     ```bash
+     nmcli -v
+     ```
+   - Si la version est inférieure à la dernière version stable, cela signifie que le système pourrait être vulnérable.
+
+2. **Vérification de l'état du service NetworkManager** :
+   - Utilisez la commande suivante pour vérifier si NetworkManager est en cours d'exécution :
+     ```bash
+     systemctl status NetworkManager
+     ```
+
+### Résolution de la Faille
+
+1. **Mise à Jour de NetworkManager** :
+   - Mettez à jour NetworkManager vers la dernière version disponible. Par exemple, sur une distribution basée sur Debian, utilisez la commande suivante :
+     ```bash
+     sudo apt-get update
+     sudo apt-get install network-manager
+     ```
+
+2. **Configuration de NetworkManager** :
+   - Assurez-vous que NetworkManager est correctement configuré pour limiter les risques de sécurité. Par exemple, vous pouvez restreindre l'accès aux interfaces réseau :
+     ```bash
+     sudo nano /etc/NetworkManager/NetworkManager.conf
+     ```
+   - Ajoutez ou modifiez les lignes suivantes pour restreindre l'accès :
+     ```plaintext
+     [main]
+     plugins=keyfile
+
+     [keyfile]
+     unmanaged-devices=interface-name:eth0;interface-name:wlan0
+     ```
+
+3. **Redémarrage du Service NetworkManager** :
+   - Après avoir appliqué les modifications, redémarrez le service NetworkManager pour qu'elles prennent effet :
+     ```bash
+     sudo systemctl restart NetworkManager
+     ```
+
+4. **Vérification du Statut** :
+   - Vérifiez le statut du service NetworkManager pour vous assurer qu'il fonctionne correctement :
+     ```bash
+     sudo systemctl status NetworkManager
+     ```
 ---
 
+## Vulnerabilité ID : 15
+![alt text](image-16.png)
+La dernière version de OpenSSH est la version 9.8, qui a été publiée le 1er juillet 2024.
+### Vérification de la Faille
 
+1. **Vérification de la version de OpenSSH** :
+   - Utilisez la commande suivante pour vérifier la version de OpenSSH installée :
+     ```bash
+     ssh -V
+     ```
+   - Si la version est inférieure à la dernière version stable, cela signifie que le système pourrait être vulnérable.
+
+2. **Vérification de l'état du service SSH** :
+   - Utilisez la commande suivante pour vérifier si le service SSH est en cours d'exécution :
+     ```bash
+     systemctl status ssh
+     ```
+
+### Résolution de la Faille
+
+1. **Mise à Jour de OpenSSH** :
+   - Mettez à jour OpenSSH vers la dernière version disponible. Par exemple, sur une distribution basée sur Debian, utilisez la commande suivante :
+     ```bash
+     sudo apt-get update
+     sudo apt-get install openssh-server
+     ```
+
+2. **Configuration de OpenSSH** :
+   - Assurez-vous que OpenSSH est correctement configuré pour limiter les risques de sécurité. Par exemple, vous pouvez désactiver l'authentification par mot de passe et interdire la connexion root :
+     ```bash
+     sudo nano /etc/ssh/sshd_config
+     ```
+   - Modifiez ou ajoutez les lignes suivantes pour sécuriser SSH :
+     ```plaintext
+     PermitRootLogin no
+     PasswordAuthentication no
+     ```
+
+3. **Redémarrage du Service SSH** :
+   - Après avoir appliqué les modifications, redémarrez le service SSH pour qu'elles prennent effet :
+     ```bash
+     sudo systemctl restart ssh
+     ```
+
+4. **Vérification du Statut** :
+   - Vérifiez le statut du service SSH pour vous assurer qu'il fonctionne correctement :
+     ```bash
+     sudo systemctl status ssh
+     ```
 
 ***Fait à Bayonne, le 11/09/2024***
 
