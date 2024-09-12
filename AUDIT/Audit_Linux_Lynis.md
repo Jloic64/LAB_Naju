@@ -43,20 +43,20 @@ Le serveur à était installé avec les configurations par défaut.
 
 ### 6.1 Vulnérabilités Identifiées
 
-| ID  | Type de vulnérabilité                                    | Niveau de risque | Impact potentiel                                                       | Priorité |
-|-----|----------------------------------------------------------|------------------|------------------------------------------------------------------------|----------|
-| 01  | Absence de Fail2Ban                                     | Élevé            | Compromission par force brute                                          | Haute    |
-| 02  | Absence de partitionnement /var                         | Moyen            | Saturation des journaux systèmes et des logs                           | Moyenne  |
-| 03  | Aucun mot de passe GRUB                                 | Élevé            | Modification des paramètres de démarrage par une personne non autorisée | Haute    |
-| 04  | Permissions pour le répertoire /etc/sudoers.d            | Élevé            | Risque d'escalade de privilèges non autorisée                          | Haute    |
-| 05  | Permissions pour le fichier de configuration CUPS        | Moyen            | Risque de sécurité lié aux permissions des fichiers                    | Moyenne  |
-| 06  | wpa_supplicant.service                                  | Risqué           | Vulnérabilités potentielles dans la gestion des connexions Wi-Fi       | Haute    |
-| 07  | user@1000.service                                       | Risqué           | Risque potentiel lié à des services utilisateurs mal configurés         | Haute    |
-| 08  | systemd-rfkill.service                                  | Risqué           | Risque lié à la gestion des périphériques RF (Wi-Fi/Bluetooth)         | Haute    |
-| 09  | USBGuard non installé                                   | Élevé            | Exposition du système à des attaques physiques ou à des fuites de données par USB | Haute    |
-| 10  | Paramètres de timeout de session                        | Moyen            | Risque d'accès non autorisé en cas de session inactive                 | Moyenne  |
-| 11  | Pas de scanner de malware                               | Élevé            | Système vulnérable aux menaces                                         | Haute    |
-| 12  | Durée maximale de validité du mot de passe désactivée   | Très élevé       | Compromission de la robustesse des mots de passe sur le long terme     | Très haute |
+| ID  | Type de vulnérabilité                                    | Niveau de risque | Impact potentiel                                                       | Priorité | Actions possibles d'un attaquant                                      |
+|-----|----------------------------------------------------------|------------------|------------------------------------------------------------------------|----------|-----------------------------------------------------------------------|
+| 01  | Absence de Fail2Ban                                      | Élevé            | Compromission par force brute                                          | Haute    | Lancer des attaques par force brute pour accéder au système           |
+| 02  | Absence de partitionnement /var                          | Moyen            | Saturation des journaux systèmes et des logs                           | Moyenne  | Saturer le système en générant des logs excessifs                     |
+| 03  | Aucun mot de passe GRUB                                  | Élevé            | Modification des paramètres de démarrage par une personne non autorisée | Haute    | Modifier les paramètres de démarrage pour obtenir un accès non autorisé|
+| 04  | Permissions pour le répertoire /etc/sudoers.d            | Élevé            | Risque d'escalade de privilèges non autorisée                          | Haute    | Modifier les fichiers pour obtenir des privilèges administratifs      |
+| 05  | Permissions pour le fichier de configuration CUPS        | Moyen            | Risque de sécurité lié aux permissions des fichiers                    | Moyenne  | Accéder ou modifier les configurations d'impression                    |
+| 06  | wpa_supplicant.service                                   | Risqué           | Vulnérabilités potentielles dans la gestion des connexions Wi-Fi       | Haute    | Exploiter les vulnérabilités pour intercepter ou manipuler les connexions Wi-Fi |
+| 07  | user@1000.service                                        | Risqué           | Risque potentiel lié à des services utilisateurs mal configurés         | Haute    | Exploiter les services mal configurés pour obtenir un accès non autorisé |
+| 08  | systemd-rfkill.service                                   | Risqué           | Risque lié à la gestion des périphériques RF (Wi-Fi/Bluetooth)         | Haute    | Manipuler les périphériques RF pour intercepter ou perturber les communications |
+| 09  | USBGuard non installé                                    | Élevé            | Exposition du système à des attaques physiques ou à des fuites de données par USB | Haute    | Utiliser des périphériques USB pour injecter des malwares ou voler des données |
+| 10  | Paramètres de timeout de session                         | Moyen            | Risque d'accès non autorisé en cas de session inactive                 | Moyenne  | Accéder au système si une session reste ouverte et inactive           |
+| 11  | Pas de scanner de malware                                | Élevé            | Système vulnérable aux menaces                                         | Haute    | Introduire des malwares sans être détecté                             |
+| 12  | Durée maximale de validité du mot de passe désactivée    | Très élevé       | Compromission de la robustesse des mots de passe sur le long terme     | Très haute | Exploiter des mots de passe faibles ou anciens pour accéder au système |
 
  
 ## 7. Recommandations
