@@ -45,10 +45,10 @@ Le serveur à était installé avec les configurations par défaut.
 
 | ID  | Type de vulnérabilité                                    | Niveau de risque | Impact potentiel                                                       | Priorité | Actions possibles d'un attaquant                                      | Référence ANSSI |
 |-----|----------------------------------------------------------|------------------|------------------------------------------------------------------------|----------|-----------------------------------------------------------------------|-----------------|
-| 01  | Absence de Fail2Ban                                      | Élevé            | Compromission par force brute                                          | Haute    | Lancer des attaques par force brute pour accéder au système           | R13             |
-| 02  | Absence de partitionnement /var                          | Moyen            | Saturation des journaux systèmes et des logs                           | Moyenne  | Saturer le système en générant des logs excessifs                     | R23             |
-| 03  | Aucun mot de passe GRUB                                  | Élevé            | Modification des paramètres de démarrage par une personne non autorisée | Haute    | Modifier les paramètres de démarrage pour obtenir un accès non autorisé| R12             |
-| 04  | Permissions pour le répertoire /etc/sudoers.d            | Élevé            | Risque d'escalade de privilèges non autorisée                          | Haute    | Modifier les fichiers pour obtenir des privilèges administratifs      | R34             |
+| 01  | Absence de Fail2Ban                                      | Élevé            | Compromission par force brute                                          | Haute    | Lancer des attaques par force brute pour accéder au système           |            |
+| 02  | Absence de partitionnement /var                          | Moyen            | Saturation des journaux systèmes et des logs                           | Moyenne  | Saturer le système en générant des logs excessifs                     | R28             |
+| 03  | Aucun mot de passe GRUB                                  | Élevé            | Modification des paramètres de démarrage par une personne non autorisée | Haute    | Modifier les paramètres de démarrage pour obtenir un accès non autorisé| R5             |
+| 04  | Permissions pour le répertoire /etc/sudoers.d            | Élevé            | Risque d'escalade de privilèges non autorisée                          | Haute    | Modifier les fichiers pour obtenir des privilèges administratifs      | R39             |
 | 05  | Permissions pour le fichier de configuration CUPS        | Moyen            | Risque de sécurité lié aux permissions des fichiers                    | Moyenne  | Accéder ou modifier les configurations d'impression                    | R45             |
 | 06  | wpa_supplicant.service                                   | Risqué           | Vulnérabilités potentielles dans la gestion des connexions Wi-Fi       | Haute    | Exploiter les vulnérabilités pour intercepter ou manipuler les connexions Wi-Fi | R56             |
 | 07  | user@1000.service                                        | Risqué           | Risque potentiel lié à des services utilisateurs mal configurés         | Haute    | Exploiter les services mal configurés pour obtenir un accès non autorisé | R67             |
@@ -67,12 +67,10 @@ Le serveur à était installé avec les configurations par défaut.
 
 Quelques ajustements sont nécessaires pour optimiser la sécurité du serveur.
 
-### 7.2 Recommandations Spécifiques
-
 | Vulnérabilité | Action recommandée | Priorité |
 |---------------|--------------------|----------|
-| 01| Installez Fail2Ban pour bannir automatiquement les hôtes ayant plusieurs erreurs d'authentification. | Haute |
-| 02 | Partitionner le disque en séparant /home /tmp  /var | Moyenne |
+| 01 | Installez Fail2Ban pour bannir automatiquement les hôtes ayant plusieurs erreurs d'authentification. | Haute |
+| 02 | Partitionner le disque en séparant /home /tmp /var | Moyenne |
 | 03 | Affecter un mot de passe robuste au GRUB | Haute |
 | 04 | Vérifiez et ajustez les permissions du répertoire /etc/sudoers.d pour éviter les escalades de privilèges non autorisées. | Haute |
 | 05 | Vérifiez et ajustez les permissions des fichiers de configuration de CUPS pour améliorer la sécurité. | Moyenne |
@@ -80,9 +78,12 @@ Quelques ajustements sont nécessaires pour optimiser la sécurité du serveur.
 | 07 | Vérifiez la configuration du service user@1000 pour garantir qu'il ne présente pas de risques de sécurité. | Haute |
 | 08 | Examinez la configuration du service systemd-rfkill pour réduire les risques liés à la gestion des périphériques RF. | Haute |
 | 09 | Installer et configurer USBGuard | Haute |  
-| 10 | Configurer le timeout des sessions utilisateur local et SSH| Moyenne |
-| 11 | Installer ClamAV et planifier des scans automatiques| Haute |
+| 10 | Configurer le timeout des sessions utilisateur local et SSH | Moyenne |
+| 11 | Installer ClamAV et planifier des scans automatiques | Haute |
 | 12 | Configurer la durée maximale de validité des mots de passe de minimum 90 jours | Très haute |
+| 13 | Fermer les ports non utilisés et sécuriser les services sur les ports ouverts | Haute |
+| 14 | Mettez à jour NetworkManager et configurez-le correctement pour limiter les risques de sécurité | Haute |
+| 15 | Mettez à jour OpenSSH et configurez-le correctement pour limiter les risques de sécurité | Haute |
 
 
 
@@ -90,14 +91,15 @@ Quelques ajustements sont nécessaires pour optimiser la sécurité du serveur.
 
 ---
 
-## 8. Conclusion
+## Conclusion
 
-L'audit a révélé 12 vulnérabilités dans le système, dont 6 sont considérées comme critiques. Ces vulnérabilités exposent le système à divers risques de sécurité, allant des attaques par force brute à l'exposition aux menaces physiques. Les principales préoccupations identifiées incluent l'absence de mesures de sécurité essentielles comme Fail2Ban et USBGuard, ainsi que des configurations inappropriées pour les services et les permissions des fichiers.
-Les recommandations proposées visent à remédier aux problèmes identifiés et à renforcer la sécurité globale du système. 
-Les actions recommandées comprennent l'installation et la configuration appropriée de Fail2Ban, l'activation de USBGuard, et l'ajustement des paramètres de sécurité pour divers services et fichiers système.
-Il est crucial que ces recommandations soient mises en œuvre rapidement pour réduire les risques et protéger le système contre les menaces potentielles. 
-Un suivi régulier et une réévaluation périodique des mesures de sécurité sont également recommandés pour garantir que le système reste sécurisé contre les vulnérabilités émergentes.
-L'amélioration des mesures de sécurité est essentielle pour assurer l'intégrité, la confidentialité et la disponibilité des données et des services.
+L’audit a révélé 15 vulnérabilités dans le système, dont 7 sont considérées comme critiques. Ces vulnérabilités exposent le système à divers risques de sécurité, allant des attaques par force brute à l’exposition aux menaces physiques. Les principales préoccupations identifiées incluent l’absence de mesures de sécurité essentielles comme Fail2Ban et USBGuard, ainsi que des configurations inappropriées pour les services et les permissions des fichiers.
+
+Les recommandations proposées visent à remédier aux problèmes identifiés et à renforcer la sécurité globale du système. Les actions recommandées comprennent l’installation et la configuration appropriée de Fail2Ban, l’activation de USBGuard, et l’ajustement des paramètres de sécurité pour divers services et fichiers système.
+
+Il est crucial que ces recommandations soient mises en œuvre rapidement pour réduire les risques et protéger le système contre les menaces potentielles. Un suivi régulier et une réévaluation périodique des mesures de sécurité sont également recommandés pour garantir que le système reste sécurisé contre les vulnérabilités émergentes.
+
+L’amélioration des mesures de sécurité est essentielle pour assurer l’intégrité, la confidentialité et la disponibilité des données et des services.
 
 ---
 
@@ -134,6 +136,7 @@ L'amélioration des mesures de sécurité est essentielle pour assurer l'intégr
 - **Scanner de malware** : Logiciel destiné à détecter et éliminer les logiciels malveillants. L'absence de scanner de malware laisse le système vulnérable aux menaces.
 
 - **Durée maximale de validité du mot de passe** : Paramètre de sécurité qui définit la période pendant laquelle un mot de passe reste valide avant d'exiger un changement. Une durée maximale désactivée compromet la robustesse des mots de passe sur le long terme.
+
 
 
 ### 9.3 Logs et Résultats des Tests Techniques
