@@ -16,9 +16,12 @@ L'objectif de cet audit est d'évaluer la sécurité de l'infrastructure et des 
 
 ## 4. Méthodologie
 
-Cet audit sera réalisé en suivant la méthodologie [PASSI (Prestataire d'Audit de la Sécurité des Systèmes d'Information)](https://cyber.gouv.fr/entreprises/qualifications/passiprestataire-daudit-de-la-securite-des-systemes-dinformation). Cette approche structurée nous permettra d'effectuer une évaluation complète et rigoureuse des composants du SI d'ABC. Les étapes principales de la méthodologie PASSI incluent l'analyse des risques, les tests techniques, les entretiens avec le personnel et l'observation sur le terrain.
+Cet audit sera réalisé en suivant la méthodologie [PASSI (Prestataire d'Audit de la Sécurité des Systèmes d'Information)](https://cyber.gouv.fr/entreprises/qualifications/passiprestataire-daudit-de-la-securite-des-systemes-dinformation).
 
 Les recommandations seront également basées sur le [guide de sécurité relatif à un système GNU/Linux](https://cyber.gouv.fr/publications/recommandations-de-securite-relatives-un-systeme-gnulinux) publié par l'ANSSI.
+
+Cette approche structurée nous permettra d'effectuer une évaluation complète et rigoureuse des composants du SI d'ABC.
+Les étapes principales de la méthodologie PASSI incluent l'analyse des risques, les tests techniques, les entretiens avec le personnel et l'observation sur le terrain.
 
 ## 5. Résumé Exécutif
 
