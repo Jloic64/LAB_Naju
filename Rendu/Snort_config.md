@@ -3,7 +3,7 @@
 
 ## I - CONFIGURATION DE LA CARTE RESEAU (A CHAUD)
 Activation du mode promiscuous
-```
+``` bash
 ip link set dev ens18 promisc on
 ```
 >En mode normal, une interface réseau ne traite que les paquets qui sont adressés spécifiquement à elle, plus les paquets de diffusion (broadcast) et de multidiffusion (multicast) auxquels elle est abonnée.
@@ -11,7 +11,7 @@ ip link set dev ens18 promisc on
 >En mode promiscuous, l'interface réseau traite tous les paquets qu'elle voit passer sur le réseau, indépendamment du fait qu'ils lui soient destinés ou non.
 
 Configuration de l'offload
-```
+```bash
 ip link show ens18
 apt install ethtool 
 ethtool -k ens18 |grep receive-offload
@@ -26,11 +26,11 @@ Désactiver ces optimisations est souvent nécessaire pour des outils d'analyse 
 
 ## II - CONFIGURATION DU PARAMETRAGE AUTO DE LA NIC EN TANT QUE SERVICE
 Création du fichier de service
-```
+```bash
 nano /etc/systemd/system/snort3-nic.service
 ```
 Contenu du fichier
-```
+```bash
 [Unit]
 Description=Set Snort 3 NIC in promiscuous mode and Disable GRO, RO on boot
 After=network.target
@@ -46,7 +46,7 @@ RemainAfterExit=yes
 WantedBy=default.target
 ```
 Activation et redémarrage du service
-```
+```bash
 systemctl daemon-reload
 systemctl start snort3-nic.service 
 systemctl enable --now snort3-nic.service
@@ -55,11 +55,11 @@ systemctl enable --now snort3-nic.service
 
 ## III - CREATION D'UN FICHIER DE REGLES PERSONNALISEES
 Création du fichier de règles
-```
+```bash
 nano /etc/snort/rules/local.rules
 ```
 Contenu du fichier
-```
+```bash
 # ----------------
 # LOCAL RULES
 # ----------------
@@ -71,18 +71,19 @@ alert icmp any any -> any any (msg:"!!! ICMP Alert !!!";sid:1000001;rev:1;classt
 
 ## III - CONFIGURATION DES LOGS
 Création du répertoire
-```
+```bash
 mkdir /var/log/snort
 chmod 777 /var/log/snort
 ```
 Modification du fichier de configuration de Snort
-```
+```bash
 nano /etc/snort/snort.lua
-```
-Modifier le fichier
 
->Se rendre tout en bas du fichier, dans la catégorie "7. configure outputs"
+Modifier le fichier
 ```
+>Se rendre tout en bas du fichier, dans la catégorie "7. configure outputs"
+
+``` bash
 ---------------------------------------------------------------------------
 -- 7. configure outputs
 ---------------------------------------------------------------------------
@@ -105,7 +106,7 @@ alert_full =
 Lancer un ping à destination de votre machine
 
 Lancer la capture Snort
-```
+```bash
 snort -c /etc/snort/snort.lua -R /etc/snort/rules/local.rules -i ens18 -A alert_fast -l /var/log/snort
 ```
 
