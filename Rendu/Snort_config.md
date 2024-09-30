@@ -115,3 +115,4 @@ snort -c /etc/snort/snort.lua -R /etc/snort/rules/local.rules -i ens18 -A alert_
 >- alert_full
 
 ![alt text](image.png)
+![alt text](image-1.png)
