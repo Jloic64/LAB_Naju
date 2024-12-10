@@ -217,6 +217,7 @@ Ces configurations offrent un contrôle précis sur les droits d'accès de l'uti
 >installer libpam-cracklib
 
 >Modifier le fichier /etc/pam.d/common-password, la ligne contenant cracklib.so :
+
 <p align="center">
     <img src="15.png" style="width: 400px;" />
 </p>
