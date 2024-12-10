@@ -266,3 +266,7 @@ et GRAYLOG avec NxLog pour la collecte des logs
 - Liaison du serveur web vers la base de données (connexion mariadb interne)
 - Mise en place des remonté des log sur un serveur centralisé, nous aurions peut être pu avec plus de temps les faires remonter sur le dashboard de ZABBIX en cas d’alertes
 
+
+
+
+>© Nicolas DESCOUTURES, Mickael BOUSQUET, Loïc JOIN egalement accompagné par la pompomgirl Francesa EZELIN
