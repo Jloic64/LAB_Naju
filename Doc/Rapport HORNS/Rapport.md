@@ -269,4 +269,4 @@ et GRAYLOG avec NxLog pour la collecte des logs
 
 
 
->© Nicolas DESCOUTURES, Mickael BOUSQUET, Loïc JOIN egalement accompagné par la pompomgirl Francesa EZELIN
+>© Nicolas.D, Mickael.B, Loïc.J egalement accompagné par la pompomgirl Francesa.E.
