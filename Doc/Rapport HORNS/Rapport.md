@@ -272,4 +272,4 @@ et GRAYLOG avec NxLog pour la collecte des logs
 
 
 
->© Nicolas.D, Mickael.B, Loïc.J egalement accompagné par la pompomgirl Francesa.E.
+>© Nicolas.D, Michael.B, Loïc.J egalement accompagné par la pompomgirl Francesca.E.
