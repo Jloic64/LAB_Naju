@@ -218,8 +218,9 @@ Ces configurations offrent un contrôle précis sur les droits d'accès de l'uti
 </p>
 
 ### Cette configuration impose :
->Une longueur minimale de 10 caractères
->Au moins 1 majuscule, 2 minuscules, 1 chiffre et 1 caractère spécial
+
+Une longueur minimale de 10 caractères
+Au moins 1 majuscule, 2 minuscules, 1 chiffre et 1 caractère spécial
 
 > Modifier ensuite le fichier /etc/login-def, les lignes pass
 <p align="center">
