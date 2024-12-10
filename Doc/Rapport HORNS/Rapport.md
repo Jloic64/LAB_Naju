@@ -216,6 +216,7 @@ Ces configurations offrent un contrôle précis sur les droits d'accès de l'uti
 <p align="center">
     <img src="15.png" style="width: 400px;" />
 </p>
+
 ### Cette configuration impose :
 >Une longueur minimale de 10 caractères
 >Au moins 1 majuscule, 2 minuscules, 1 chiffre et 1 caractère spécial
@@ -224,6 +225,7 @@ Ces configurations offrent un contrôle précis sur les droits d'accès de l'uti
 <p align="center">
     <img src="16.png" style="width: 400px;" />
 </p>
+
 Cette configuration force les changements de mots de passe tous les 150 jours avec un délai de prévenance de 7 jours
 
 # Configuration de chage sur Ubuntu
