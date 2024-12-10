@@ -7,20 +7,20 @@ Horns Industry est une société par actions simplifiée (SAS) basée à Roissy-
 
 ### Objectifs du projet
 Le projet vise à :
-Héberger plusieurs services critiques de l'entreprise
-Garantir la sécurité des données et la disponibilité des services
-Mettre en place des politiques strictes de sécurité des accès
-Implémenter une supervision continue de l'infrastructure
-Respecter les bonnes pratiques d'administration système
+- Héberger plusieurs services critiques de l'entreprise
+- Garantir la sécurité des données et la disponibilité des services
+- Mettre en place des politiques strictes de sécurité des accès
+- Implémenter une supervision continue de l'infrastructure
+- Respecter les bonnes pratiques d'administration système
 
 ### Aperçu des services à héberger
 Les services critiques à héberger comprennent :
-Un serveurs WEB
-Une base de données
-Un routeur - pare feu
-Un serveur dédié à l’inventaire
-Un serveur de gestion des utilisateurs (Active Directory)
-Un serveur dédié à la supervision
+- Un serveurs WEB
+- Une base de données
+- Un routeur - pare feu
+- Un serveur dédié à l’inventaire
+- Un serveur de gestion des utilisateurs (Active Directory)
+- Un serveur dédié à la supervision
 
 Ces services seront déployés dans une infrastructure sécurisée, avec des mécanismes de protection contre les attaques, une gestion rigoureuse des accès utilisateurs, et un système de surveillance en temps réel pour assurer la performance et la disponibilité optimales.
 
