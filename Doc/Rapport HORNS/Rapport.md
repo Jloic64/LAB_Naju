@@ -163,9 +163,10 @@ sudo systemctl start ufw
 <p align="center">
     <img src="12.png" style="width: 400px;" />
 </p>
-## Mise en place de Fail2Ban
 
-# Configuration sur les serveurs cloud
+# Mise en place de Fail2Ban
+
+## Configuration sur les serveurs cloud
 >copie du fichier par défaut pour backp
 >modif fichier /etc/fail2ban/jail.local
 <p align="center">
