@@ -1,0 +1,95 @@
+# Phase de Préparation (30 minutes) :
+
+
+## Défenseurs : vous devez configurer Snort 3 sur vos machines pour surveiller le trafic réseau entrant et sortant : définissez des règles Snort de base pour détecter des scans de ports, des tentatives de connexion SSH suspectes, et des tentatives d'exploitation courantes
+Ajout des regles dans le fichier des regles de Snort
+
+``` bash 
+nano /root/snort3/lua/rules/local.rules
+```
+## Ajouter :
+``` bash
+alert tcp any any -> any any (msg:"Scan de ports détecté"; flags:S; detection_filter:track by_src, count 20, seconds 60; sid>
+
+alert tcp any any -> any 22 (msg:"Tentative de connexion SSH suspecte"; flags:S; sid:1000002; rev:1;)
+
+alert tcp any any -> any any (msg:"Tentative d'exploitation détectée"; content:"|90 90 90|"; sid:1000003; rev:1;)
+```
+
+
+## Attaquants :
+Attaquants : passez à l'attaque de la machine désignée par votre formateur !
+
+### Outils autorisés pour les attaques :
+>Nmap : pour les scans de ports et de services
+```bash 
+nmap -sS 10.0.0.113
+```
+![alt text](image-2.png)
+
+>Hydra : pour les attaques par force brute sur SSH
+# Utilisation de Hydra pour une attaque brute force SSH
+
+## Prérequis :
+1. **Hydra** installé sur votre machine. (Si ce n'est pas le cas, vous pouvez l'installer avec la commande suivante sous Linux : `sudo apt-get install hydra`).
+2. Un fichier contenant des mots de passe (`passwords.txt`).
+3. Un fichier contenant des noms d'utilisateurs (`usernames.txt`), ou bien utiliser un seul nom d'utilisateur.
+
+## Commande de base :
+
+```bash
+hydra -L usernames.txt -P passwords.txt ssh://<adresse_IP_cible>
+```
+> -L usernames.txt : Spécifie le fichier contenant une liste de noms d'utilisateurs.
+
+> -P passwords.txt : Spécifie le fichier contenant une liste de mots de passe.
+
+> ssh://<adresse_IP_cible> : Spécifie que l'attaque se fait via le protocole SSH vers l'adresse IP cible.
+
+### Options supplémentaires :
+```bash
+hydra -l user -P /root/passwords.txt -t 4 -vV ssh://10.0.0.105
+
+```
+###Port personnalisé : Si le service SSH tourne sur un port différent (exemple : 2222 au lieu du port 22 par défaut), vous pouvez spécifier le port avec -s :
+
+```bash
+hydra -l root -P passwords.txt -s 2222 ssh://192.168.1.100
+```
+
+Vitesse : Vous pouvez ajuster le nombre de tentatives simultanées avec l'option -t (par défaut, c'est 16 threads). Par exemple, pour utiliser 4 threads :
+### Réduire la vitesse d’attaque :
+Certaines protections peuvent limiter les connexions trop rapides, donc vous pouvez ajouter une option comme -W 30 pour définir un délai de 30 secondes après un nombre d'essais infructueux.
+
+> DDoS basique : par exemple avec hping3 pour tester la robustesse contre les attaques de déni de service
+```bash
+hping3 -S --flood -p 22 10.0.0.103
+```
+
+hping3 : Est un outil de ligne de commande utilisé pour générer et analyser des paquets TCP/IP. Il est souvent utilisé pour tester la sécurité des réseaux.
+-S : Cette option spécifie que les paquets TCP envoyés auront le drapeau SYN activé. Cela signifie que la commande envoie des paquets SYN, qui sont utilisés pour initier une connexion TCP.
+
+–flood : Cette option indique à hping3 d’envoyer des paquets aussi rapidement que possible, sans attendre de réponse. Cela peut être utilisé pour effectuer une attaque par déni de service (DoS) en inondant la cible avec des paquets.
+
+-p 22 : Cette option spécifie le port de destination. Dans ce cas, le port 22, qui est généralement utilisé pour les connexions SSH.
+10.0.0.103 : C’est l’adresse IP de la cible à laquelle les paquets seront envoyés.
+
+En résumé, cette commande envoie une inondation de paquets SYN au port 22 de l’adresse IP 10.0.0.103, ce qui peut être utilisé pour tester la résistance du serveur à une attaque SYN flood.
+>BONUS : Metasploit : pour l'exploitation de vulnérabilités
+​
+
+hping3 -S --flood -p 22 10.0.0.113
+
+
+
+
+
+
+
+snort -c /root/snort3/lua/snort.lua -R /root/snort3/lua/rules/local.rules -i ens18 -A alert_fast -l /var/log/snort
+
+cd /root/var/log/snort
+
+cat alert_fast.txt
+
+hydra -l user -P /root/passwords.txt -t 4 -vV ssh://10.0.0.113
