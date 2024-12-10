@@ -245,8 +245,8 @@ et GRAYLOG avec NxLog pour la collecte des logs
 </p>
 
 
-</p>
 ## Configuration de la collecte de logs avec Graylog
+
 ### Fichier de configuration de nxlog sur windows server : 
 <p align="center">
     <img src="19.png" style="width: 400px;" />
