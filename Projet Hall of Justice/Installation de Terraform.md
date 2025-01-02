@@ -40,7 +40,7 @@ apt install -y wget unzip
 ```
 ### Étape 3 : Installation de Terraform
 
-#### Télécharger la version la plus récente de Terraform : Remplace <VERSION> par la version que tu veux installer (par exemple, 1.6.0).
+#### Télécharger la version la plus récente de Terraform : Remplace <VERSION> par la version que tu veux installer (par exemple, 10.10.2).
 ```bash
  wget https://releases.hashicorp.com/terraform/<VERSION>/terraform_<VERSION>_linux_amd64.zip
 ```
