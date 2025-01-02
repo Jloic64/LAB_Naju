@@ -16,5 +16,7 @@
 - State File : Fichier qui stocke l'état actuel de l'infrastructure.
 - Plan & Apply : Le plan montre les modifications nécessaires, et apply les exécute.
 
-### Documentation officielle : Introduction to Terraform https://developer.hashicorp.com/terraform/docs
+### Documentation officielle :
+
+- [Introduction to Terraform](https://developer.hashicorp.com/terraform/docs)
 
