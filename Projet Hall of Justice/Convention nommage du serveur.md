@@ -16,7 +16,7 @@
 | 400-499        | LXC - Linux                   | Conteneurs Linux (Debian, Ubuntu, etc.)      |
 | 500-599        | Modèles (Templates)           | Modèles de VM ou LXC pour duplication.       |
 | 600-699        | Outils spécifiques            | NAS, routeurs (pfsense), outils réseau, etc. |
-
+| 1000-1100      | Lab - VM ou LXC               | Machines utilisées pour des environnements de formation (serveurs ou clients). |
 ---
 
 ## 3. Exemples de nomenclature
@@ -51,6 +51,17 @@ ID : 601, Type : Outils, Fonction : NAS Synology n°1.
 - **602-TOOLS-PFSENSE-FW01**  
 ID : 602, Type : Outils, Fonction : Routeur pfsense n°1.  
 
+- **1000-1100**  
+  - **Type de machine** : Lab formation - VM ou LXC  
+  - **Détails** : Machines utilisées pour un environnement de formation (serveurs ou clients).  
+  - **Convention de nomenclature** :  
+    ```
+    Type-OS-TYPE(NUM)
+    ```
+    - **Exemples** :  
+      - `LXC-DEBIAN-SERVEUR-01` : Conteneur LXC Debian utilisé comme serveur.  
+      - `VM-WIN10-CLIENT-01` : Machine virtuelle Windows 10 utilisée comme client.  
+      - `LXC-UBUNTU-CLIENT-02` : Conteneur LXC Ubuntu utilisé comme client n°2.
 ---
 
 ## 4. Convention de nommage des OS
