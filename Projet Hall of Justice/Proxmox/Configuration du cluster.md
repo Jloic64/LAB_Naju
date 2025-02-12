@@ -1,3 +1,4 @@
+
 # **Résumé de la Configuration du Cluster Proxmox - Hall of Justice**
 
 ## **1. Matériel à Disposition**
@@ -313,3 +314,5 @@ echo "Uptime : $(uptime -p)"
 echo "Utilisation du disque :"
 df -h | grep '^/dev'
 ``` 
+=======
+>>>>>>> 1ff1614199046778194782bb5da836d58dde3cad
