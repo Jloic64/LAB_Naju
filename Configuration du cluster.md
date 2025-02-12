@@ -17,9 +17,9 @@
   - **Disques** :
     - SSD de 250 Go pour l’hyperviseur Proxmox.
 
-- **Mini PC HP (DIANA)** :
+- **Mini PC type NUKE (DIANA)** :
   - **RAM** : 8 Go.
-  - **Processeur** : 20 cœurs - Intel Core i5.
+  - **Processeur** : 20 cœurs - Intel Core i5
   - **Disques** :
     - NVMe SSD de 250 Go pour l’hyperviseur.
 
