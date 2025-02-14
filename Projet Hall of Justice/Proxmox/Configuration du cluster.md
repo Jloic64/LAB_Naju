@@ -1,4 +1,3 @@
-
 # **Résumé de la Configuration du Cluster Proxmox - Hall of Justice**
 
 ## **1. Matériel à Disposition**
@@ -18,7 +17,7 @@
   - **Disques** :
     - SSD de 250 Go pour l’hyperviseur Proxmox.
 
-- **Mini PC HP (DIANA)** :
+- **Mini PC type NUKE (DIANA)** :
   - **RAM** : 8 Go.
   - **Processeur** : 20 cœurs - Intel Core i5.
   - **Disques** :
@@ -314,5 +313,3 @@ echo "Uptime : $(uptime -p)"
 echo "Utilisation du disque :"
 df -h | grep '^/dev'
 ``` 
-=======
->>>>>>> 1ff1614199046778194782bb5da836d58dde3cad

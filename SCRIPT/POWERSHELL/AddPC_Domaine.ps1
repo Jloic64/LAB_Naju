@@ -1,0 +1,1 @@
+Add-Computer -DomainName "tssr" -Credential (Get-Credential) -Restart
