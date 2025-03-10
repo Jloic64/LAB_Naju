@@ -1,0 +1,222 @@
+# Comment utiliser sudo sous Linux ? Notre guide complet avec des exemples
+
+*Publié le 21/02/2025 par Florian BURNEL*  
+*Catégories : Debian, Linux, Sudo, sudoers*
+
+---
+
+## Sommaire
+
+- [I. Présentation](#i-présentation)
+- [II. Qu'est-ce que la commande sudo ?](#ii-quest-ce-que-la-commande-sudo-)
+- [III. Quels sont les avantages de sudo ?](#iii-quels-sont-les-avantages-de-sudo-)
+- [IV. Comment installer sudo sur Linux ?](#iv-comment-installer-sudo-sur-linux-)
+- [V. Comment utiliser sudo ?](#v-comment-utiliser-sudo-)
+  - [A. Exécution d'une commande avec sudo](#a-exécution-dune-commande-avec-sudo)
+  - [B. Exécution d'une commande en tant qu'un autre utilisateur](#b-exécution-dune-commande-en-tant-quun-autre-utilisateur)
+  - [C. Lancer un shell root temporaire](#c-lancer-un-shell-root-temporaire)
+- [VI. Configuration du fichier /etc/sudoers](#vi-configuration-du-fichier-etcsudoers)
+  - [A. Ajouter un utilisateur au groupe sudo](#a-ajouter-un-utilisateur-au-groupe-sudo)
+  - [B. Éditer la configuration de sudoers avec visudo](#b-éditer-la-configuration-de-sudoers-avec-visudo)
+  - [C. Syntaxe d'une règle sudo](#c-syntaxe-dune-règle-sudo)
+  - [D. Créer une nouvelle règle dans sudoers](#d-créer-une-nouvelle-règle-dans-sudoers)
+  - [E. Sudoers et les alias](#e-sudoers-et-les-alias)
+  - [F. Sudoers et le caractère d'exclusion "!"](#f-sudoers-et-le-caractère-dexclusion-)
+  - [G. Modifier le délai d'expiration de la commande sudo](#g-modifier-le-délai-dexpiration-de-la-commande-sudo)
+- [VII. Le dossier /etc/sudoers.d](#vii-le-dossier-etcsudoersd)
+- [VIII. Traçabilité des actions de sudo](#viii-traçabilité-des-actions-de-sudo)
+- [IX. Conclusion](#ix-conclusion)
+- [Auteur](#auteur)
+
+---
+
+## I. Présentation
+
+- **Contexte :**  
+  L'administration d'une machine Linux se fait soit en utilisant le compte *root* soit via la commande `sudo`.
+- **Objectif de l'article :**  
+  Expliquer le rôle, les avantages et la configuration de `sudo` via le fichier `/etc/sudoers`, accompagné d'exemples pratiques.
+
+---
+
+## II. Qu'est-ce que la commande sudo ?
+
+- **Définition :**  
+  `sudo` (abréviation de *Substitute User Do*) permet d'exécuter des commandes avec des privilèges élevés sans se connecter directement en tant que *root*.
+- **Fonctionnement :**  
+  L'utilisateur entre son propre mot de passe et l'action est loguée pour une meilleure traçabilité.
+
+---
+
+## III. Quels sont les avantages de sudo ?
+
+- **Sécurité :**  
+  - Chaque utilisateur utilise son propre mot de passe, évitant le partage du compte *root*.
+  - Limitation de l'accès à certaines commandes.
+- **Gestion des droits :**  
+  - Attribution de privilèges précis à chaque utilisateur.
+  - Délai d'expiration après lequel le mot de passe devra être ressaisi.
+- **Comparaison :**  
+  Similaire à l'UAC sur Windows, mais adapté à Linux.
+
+---
+
+## IV. Comment installer sudo sur Linux ?
+
+- **Selon la distribution :**
+  - **Debian/Ubuntu (avec interface graphique) :**  
+    L'utilisateur créé est automatiquement autorisé.
+  - **Debian (sans interface graphique) :**  
+    `sudo` peut ne pas être installé par défaut.
+- **Commandes d'installation :**
+  ```bash
+  # Debian / Ubuntu
+  apt-get install sudo
+
+  # Fedora
+  dnf install sudo
+
+## V. Comment utiliser sudo ?
+A. Exécution d'une commande avec sudo
+Exemple :
+Pour mettre à jour les paquets :
+bash
+Copier
+sudo apt update && sudo apt upgrade -y
+L'utilisateur saisit son mot de passe pour exécuter la commande avec les privilèges élevés.
+B. Exécution d'une commande en tant qu'un autre utilisateur
+Utilisation de l'option -u :
+bash
+Copier
+sudo -u it-connect whoami
+Permet d'exécuter la commande sous l'identité d'un autre utilisateur.
+C. Lancer un shell root temporaire
+Commande :
+bash
+Copier
+sudo -i
+Ouvre un shell avec les privilèges root jusqu'à la commande exit.
+VI. Configuration du fichier /etc/sudoers
+Le fichier /etc/sudoers définit les droits d'utilisation de sudo et doit être modifié via l'outil visudo pour éviter les erreurs.
+
+A. Ajouter un utilisateur au groupe sudo
+Exemple d'ajout :
+bash
+Copier
+usermod -aG sudo adm_flo
+Vérification :
+Liste des permissions : sudo -l
+Vérifier l'appartenance au groupe avec id ou groups.
+B. Éditer la configuration de sudoers avec visudo
+Commande :
+bash
+Copier
+sudo visudo
+Exemple de directives :
+plaintext
+Copier
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) ALL
+C. Syntaxe d'une règle sudo
+Composition d'une règle :
+Utilisateur/Groupe :
+Un utilisateur est spécifié par son identifiant, un groupe par %nom_du_groupe.
+Hôte :
+ALL pour appliquer la règle sur toutes les machines.
+Utilisateurs cibles :
+ALL pour autoriser tous les utilisateurs (généralement root inclus).
+Commandes autorisées :
+Spécifie les commandes que l'utilisateur peut exécuter.
+Exemple :
+plaintext
+Copier
+%sudo   ALL=(ALL:ALL)  ALL
+D. Créer une nouvelle règle dans sudoers
+Cas pratique :
+Donner à l'utilisateur itconnect le droit d'éditer /etc/hosts avec nano.
+bash
+Copier
+itconnect ALL=(ALL) /usr/bin/nano /etc/hosts
+Option sans mot de passe :
+bash
+Copier
+itconnect ALL=(ALL) NOPASSWD: /usr/bin/nano /etc/hosts
+Astuce :
+Utiliser which nano pour connaître le chemin complet du binaire.
+E. Sudoers et les alias
+Définir des alias pour simplifier la configuration :
+Alias d'utilisateurs :
+plaintext
+Copier
+User_Alias ADMINS = itconnect, flo
+Alias de commandes :
+plaintext
+Copier
+Cmnd_Alias SYSTEM = /usr/bin/systemctl
+Application dans une règle :
+plaintext
+Copier
+ADMINS ALL=(ALL) SYSTEM
+F. Sudoers et le caractère d'exclusion "!"
+Exclure une commande spécifique :
+Exemple :
+Autoriser itconnect à utiliser la commande passwd pour tous les utilisateurs sauf root.
+plaintext
+Copier
+itconnect ALL=(ALL) /usr/bin/passwd, !/usr/bin/passwd root
+G. Modifier le délai d'expiration de la commande sudo
+Par défaut :
+Après une utilisation, le mot de passe reste valide pendant quelques minutes.
+Pour changer la durée :
+plaintext
+Copier
+Defaults timestamp_timeout=5
+Exemples complémentaires :
+Pour un utilisateur spécifique :
+plaintext
+Copier
+Defaults:flo timestamp_timeout=10
+Pour exiger le mot de passe à chaque commande :
+plaintext
+Copier
+Defaults timestamp_timeout=0
+Pour activer l'affichage de caractères lors de la saisie :
+plaintext
+Copier
+Defaults pwfeedback
+VII. Le dossier /etc/sudoers.d
+Utilité :
+Permet de répartir la configuration de sudo en plusieurs fichiers.
+Création d'un fichier de configuration :
+bash
+Copier
+visudo /etc/sudoers.d/ADMINS
+Attention :
+Seuls les fichiers sans caractères spéciaux ("~", ".") seront lus.
+VIII. Traçabilité des actions de sudo
+Logs :
+Sur Debian/Ubuntu : /var/log/auth.log
+Sur Red Hat/Fedora : /var/log/secure
+Exemples de log :
+Tentative non autorisée :
+plaintext
+Copier
+sudo: itconnect : user NOT in sudoers ; TTY=pts/0 ; PWD=/home/flo ; USER=root ; COMMAND=/usr/bin/apt-get update
+Action autorisée :
+plaintext
+Copier
+sudo: flo : TTY=pts/0 ; PWD=/home/flo ; USER=root ; COMMAND=/usr/bin/passwd it-connect
+IX. Conclusion
+Récapitulatif :
+Le guide détaille l'utilisation de sudo et la configuration de sudoers pour renforcer la sécurité des systèmes Linux.
+Avantages :
+Permet une gestion fine des droits sans partager le compte root.
+Bonne pratique :
+L'utilisation de sudo est recommandée notamment par l'ANSSI.
+Ressources complémentaires :
+Un lien vers une vidéo explicative est proposé pour ceux qui préfèrent le format vidéo.
+Auteur
+Florian BURNEL
