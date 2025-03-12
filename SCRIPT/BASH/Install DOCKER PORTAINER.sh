@@ -2,16 +2,15 @@
 ### Ce script se compose de plusieurs commandes que vous exécuterez en tant qu'utilisateur root ou en utilisant sudo pour les privilèges d'administration. 
 
 
-Ouvrir un éditeur de texte (comme nano ou vim) sur le serveur Debian.
-Copiez et collez le contenu du script ci-dessus dans l'éditeur.
-Enregistrer le fichier sous un nom significatif, par exemple install-docker-portainer.sh.
-Rendre le script exécutable en exécutant la commande chmod +x install-docker-portainer.sh dans le terminal.
-Exécuter le script en utilisant la commande ./install-docker-portainer.sh ou sudo ./install-docker-portainer.sh si vous n'êtes pas root.
-Remplacer <Votre_IP> par l'adresse IP réelle de votre serveur Debian lorsque vous essayez d'accéder à Portainer via un navigateur web.
+#Ouvrir un éditeur de texte (comme nano ou vim) sur le serveur Debian.
+#Copiez et collez le contenu du script ci-dessus dans l'éditeur.
+#Enregistrer le fichier sous un nom significatif, par exemple install-docker-portainer.sh.
+#Rendre le script exécutable en exécutant la commande chmod +x install-docker-portainer.sh dans le terminal.
+#Exécuter le script en utilisant la commande ./install-docker-portainer.sh ou sudo ./install-docker-portainer.sh si vous n'êtes pas root.
+#Remplacer <Votre_IP> par l'adresse IP réelle de votre serveur Debian lorsque vous essayez d'accéder à Portainer via un navigateur web.
 #
 
 
-``` bash
 #!/bin/bash
 # Shebang. Il indique au système d'exploitation que ce script doit être exécuté avec /bin/bash.
 
