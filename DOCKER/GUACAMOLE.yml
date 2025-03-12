@@ -55,10 +55,10 @@ services:
     image: mariadb:10.5.8
     container_name: guacamole_db
     environment:
-      MYSQL_ROOT_PASSWORD: Axbioinfo40#
+      MYSQL_ROOT_PASSWORD: monmotdepass
       MYSQL_DATABASE: guacamole_db
       MYSQL_USER: guacamole_user
-      MYSQL_PASSWORD: Axbioinfo40#
+      MYSQL_PASSWORD: monmotdepass
     volumes:
       - /home/docker/appdata/guacamole/init:/docker-entrypoint-initdb.d:z
       - /home/docker/appdata/guacamole/data:/var/lib/mysql

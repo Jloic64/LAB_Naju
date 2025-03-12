@@ -1,0 +1,47 @@
+version: '3.3'
+
+services:
+  web:
+    build: ./web
+    networks:
+      - ecommerce
+    ports:
+      - '80:80'
+
+  database:
+    image: mysql:latest
+    container_name: database
+    networks:
+      - ecommerce
+    environment:
+      - MYSQL_ROOT_PASSWORD=helloworld
+      - MYSQL_DATABASE=ecommerce
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+    volumes:
+      - db_data:/var/lib/mysql
+
+  wordpress:
+    depends_on:
+      - database
+    image: wordpress:latest
+    container_name: wordpress
+    networks:
+      - ecommerce
+    ports:
+      - "8000:80"
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=database:3306
+      - WORDPRESS_DB_NAME=ecommerce
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+    volumes:
+      - wp_data:/var/www/html
+
+networks:
+  ecommerce:
+
+volumes:
+  db_data:
+  wp_data:
