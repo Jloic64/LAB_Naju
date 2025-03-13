@@ -28,7 +28,7 @@ services:
       MYSQL_HOSTNAME: guacamole_db
       MYSQL_DATABASE: guacamole_db
       MYSQL_USER: guacamole_user
-      MYSQL_PASSWORD: Axbioinfo40#
+      MYSQL_PASSWORD: monmotdepass
       TOTP_ENABLED: 'true'
       GUACAMOLE_HOME: /guacamole/guacamole_home
       GUACAMOLE_LOG_LEVEL: info
