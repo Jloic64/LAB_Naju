@@ -52,6 +52,20 @@ sudo usermod -aG docker runner
 ```bash
 sudo useradd gitlab-runner -m -s /bin/bash
 ```
+
+🛠️ **Remarque importante : Donner les droits sudo à gitlab-runner**
+
+Sur `runner-host`, connectez-vous avec un utilisateur ayant les droits administrateur (ex : `loic`) et exécutez :
+
+```bash
+sudo usermod -aG sudo gitlab-runner
+```
+
+Ensuite, reconnectez-vous avec `gitlab-runner` :
+
+```bash
+su - gitlab-runner
+```
 🛠️ **Remarque importante :**  
 Si la commande `su - gitlab-runner` retourne une erreur d'authentification (`Authentication failure`), cela signifie que l'utilisateur `gitlab-runner` n'a pas encore de mot de passe défini.
 
@@ -79,32 +93,34 @@ ssh-keygen -t ed25519
 cat ~/.ssh/id_ed25519.pub
 ---
 
+---
+
 ## 📥 ÉTAPE 2.1 — Copier la clé publique sur le `docker-host`
 
 ### Sur `runner-host` :
 
-Afficher la clé publique :
+Afficher la clé publique générée :
 
 ```bash
 cat /home/gitlab-runner/.ssh/id_ed25519.pub
 ```
 
-👉 **Copier tout le contenu affiché** (commençant par `ssh-ed25519 ...`).
+👉 **Copier tout le contenu affiché** (c’est une ligne qui commence par `ssh-ed25519 ...`).
 
 ---
 
 ### Sur `docker-host` :
 
-Créer le dossier `.ssh` pour l'utilisateur `runner` et ajouter la clé :
+Créer le dossier `.ssh` et coller la clé :
 
 ```bash
 sudo mkdir -p /home/runner/.ssh
 sudo nano /home/runner/.ssh/authorized_keys
 ```
 
-📌 Coller la clé publique copiée précédemment, puis enregistrer.
+📌 Colle la clé copiée dans ce fichier, puis enregistre.
 
-Définir les bons droits :
+Configurer les permissions correctement :
 
 ```bash
 sudo chmod 700 /home/runner/.ssh
@@ -114,15 +130,16 @@ sudo chown -R runner:runner /home/runner/.ssh
 
 ---
 
-### ✅ Vérification de la connexion
+### ✅ Vérification de la connexion SSH
 
-Depuis `runner-host` :
+Depuis `runner-host`, toujours sous l’utilisateur `gitlab-runner` :
 
 ```bash
 ssh runner@IP_DU_DOCKER_HOST
 ```
 
-Si la connexion se fait sans mot de passe : **la liaison SSH est opérationnelle.**
+👉 **Tu dois être connecté directement sans que le système demande de mot de passe.**  
+C’est le signe que **l’authentification par clé fonctionne correctement** et que le GitLab Runner pourra s’y connecter automatiquement pour exécuter des jobs Docker à distance.**
 ```
 
 > Copie la clé affichée pour la coller sur le serveur Docker.
@@ -146,22 +163,74 @@ ssh runner@IP_DU_DOCKER_HOST
 
 ---
 
+---
+
 ## 🐳 ÉTAPE 3 — Installer Docker sur `docker-host`
+
+### Connexion à la machine `SRV-DEB12-DOCKER` :
+
+```bash
+ssh runner@IP_DU_DOCKER_HOST
+```
+
+### Installation de Docker :
 
 ```bash
 sudo apt update
 sudo apt install -y docker.io
+```
+
+### Activer et démarrer le service Docker :
+
+```bash
 sudo systemctl enable docker
 sudo systemctl start docker
+```
+
+### Ajouter l’utilisateur `runner` au groupe `docker` :
+
+```bash
+sudo usermod -aG docker runner
+```
+
+> 🔁 **Déconnecte-toi puis reconnecte-toi** (ou utilise `newgrp docker`) pour que les changements de groupe prennent effet.
+
+### Vérification :
+
+```bash
+docker ps
 ```
 
 ---
 
 ## 🏃 ÉTAPE 4 — Installer GitLab Runner sur `runner-host`
 
+### Ajouter l'utilisateur `gitlab-runner` au groupe sudo (à faire depuis un utilisateur avec privilèges, ex. `loic`) :
+
+```bash
+sudo usermod -aG sudo gitlab-runner
+```
+
+> 🔁 Ensuite, reconnecte-toi avec :  
+> `su - gitlab-runner`
+
+---
+
+### Installation du dépôt GitLab Runner :
+
 ```bash
 curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
+```
+
+### Installation du paquet :
+
+```bash
 sudo apt install -y gitlab-runner
+```
+
+### Vérification de l'installation :
+
+```bash
 gitlab-runner --version
 ```
 
@@ -169,22 +238,39 @@ gitlab-runner --version
 
 ## 🔗 ÉTAPE 5 — Enregistrer le runner via SSH
 
-### Interface GitLab :
+### Depuis l’interface GitLab :
 
-- Settings > CI/CD > Runners > New project runner
-- Description : runner-docker-najuma
-- Tags : ssh, docker
-- Cocher : Run untagged jobs, Protected, Lock to current project
-- Copier le token
+Rends-toi dans :
 
-### Sur `runner-host` :
+**Projet :** `Salle-8 / runner-test-Najuma`  
+➡️ `Settings > CI/CD > Runners > New project runner`
+
+Remplis les champs suivants :
+
+- **Description** : `runner-docker-najuma`
+- **Tags** : `ssh, docker`
+- **Options** : Cocher `Run untagged jobs`, `Protected`, et `Lock to current project`
+- **Token** : Copier le token affiché
+
+---
+
+### Depuis `runner-host` (machine GitLab Runner) :
+
+Lancer l’enregistrement du runner :
 
 ```bash
 sudo gitlab-runner register
-# ➤ Suivre les instructions et choisir "ssh" comme executor
 ```
 
----
+Répondre aux questions comme suit :
+
+- **URL GitLab** : `https://gitlab.techwave.lab/`
+- **Token** : (coller le token copié)
+- **Description** : `runner-docker-najuma`
+- **Tags** : `ssh,docker`
+- **Executor** : `ssh`
+- **Adresse SSH** : `runner@10.108.0.102`
+- **Chemin de la clé privée SSH** : `/home/gitlab-runner/.ssh/id_ed25519`
 
 ## 🗂️ ÉTAPE 6 — Préparer les environnements `/opt/app/test` et `/opt/app/prod` sur `docker-host`
 
