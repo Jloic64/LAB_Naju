@@ -52,6 +52,20 @@ sudo usermod -aG docker runner
 ```bash
 sudo useradd gitlab-runner -m -s /bin/bash
 ```
+🛠️ **Remarque importante :**  
+Si la commande `su - gitlab-runner` retourne une erreur d'authentification (`Authentication failure`), cela signifie que l'utilisateur `gitlab-runner` n'a pas encore de mot de passe défini.
+
+### ➤ Solution :
+
+```bash
+sudo passwd gitlab-runner
+```
+
+👉 Entrez un mot de passe sécurisé, puis réessayez :
+
+```bash
+su - gitlab-runner
+```
 
 ---
 
