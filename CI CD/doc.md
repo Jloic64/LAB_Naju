@@ -1,4 +1,3 @@
-
 # 📘 Déploiement GitLab Runner avec Docker distant via SSH
 
 ## 🧭 PRÉAMBULE : Pourquoi structurer son projet avec des branches ?
@@ -18,7 +17,6 @@ Avantages :
 - Faciliter les revues de code
 
 ---
-
 
 ## 🔎 Comprendre l’architecture
 
@@ -40,11 +38,19 @@ Avantages :
 
 ---
 
-## 🧑‍💻 ÉTAPE 1 — Créer l’utilisateur `runner` sur le serveur Docker
+## 👤 ÉTAPE 1 — Créer les utilisateurs nécessaires
+
+### Sur `docker-host` (machine Docker) :
 
 ```bash
 sudo useradd runner -m -s /bin/bash
 sudo usermod -aG docker runner
+```
+
+### Sur `runner-host` (machine GitLab Runner) :
+
+```bash
+sudo useradd gitlab-runner -m -s /bin/bash
 ```
 
 ---
@@ -59,14 +65,17 @@ ssh-keygen -t ed25519
 cat ~/.ssh/id_ed25519.pub
 ```
 
+> Copie la clé affichée pour la coller sur le serveur Docker.
+
 ### Sur `docker-host` :
 
 ```bash
-mkdir -p /home/runner/.ssh
-nano /home/runner/.ssh/authorized_keys
-chmod 700 /home/runner/.ssh
-chmod 600 /home/runner/.ssh/authorized_keys
-chown -R runner:runner /home/runner/.ssh
+sudo mkdir -p /home/runner/.ssh
+sudo nano /home/runner/.ssh/authorized_keys
+# ➤ Colle ici la clé copiée depuis le runner-host
+sudo chmod 700 /home/runner/.ssh
+sudo chmod 600 /home/runner/.ssh/authorized_keys
+sudo chown -R runner:runner /home/runner/.ssh
 ```
 
 ### Vérification :
@@ -112,18 +121,18 @@ gitlab-runner --version
 
 ```bash
 sudo gitlab-runner register
+# ➤ Suivre les instructions et choisir "ssh" comme executor
 ```
 
 ---
 
-## 🗂️ ÉTAPE 6 — Préparer les environnements `/opt/app/test` et `/opt/app/prod`
+## 🗂️ ÉTAPE 6 — Préparer les environnements `/opt/app/test` et `/opt/app/prod` sur `docker-host`
 
 ```bash
 sudo mkdir -p /opt/app/test /opt/app/prod
 sudo chmod -R 770 /opt/app
 sudo chgrp -R docker /opt/app
 ```
-
 ---
 
 ## 📁 ÉTAPE 7 — Initialiser un dépôt Git
