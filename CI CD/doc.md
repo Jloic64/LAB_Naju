@@ -1,5 +1,5 @@
 
-# 📘 Documentation complète : Déploiement GitLab Runner avec Docker distant via SSH
+# 📘 Déploiement GitLab Runner avec Docker distant via SSH
 
 ## 🧭 PRÉAMBULE : Pourquoi structurer son projet avec des branches ?
 
