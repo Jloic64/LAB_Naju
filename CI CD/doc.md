@@ -77,6 +77,52 @@ su - gitlab-runner
 su - gitlab-runner
 ssh-keygen -t ed25519
 cat ~/.ssh/id_ed25519.pub
+---
+
+## 📥 ÉTAPE 2.1 — Copier la clé publique sur le `docker-host`
+
+### Sur `runner-host` :
+
+Afficher la clé publique :
+
+```bash
+cat /home/gitlab-runner/.ssh/id_ed25519.pub
+```
+
+👉 **Copier tout le contenu affiché** (commençant par `ssh-ed25519 ...`).
+
+---
+
+### Sur `docker-host` :
+
+Créer le dossier `.ssh` pour l'utilisateur `runner` et ajouter la clé :
+
+```bash
+sudo mkdir -p /home/runner/.ssh
+sudo nano /home/runner/.ssh/authorized_keys
+```
+
+📌 Coller la clé publique copiée précédemment, puis enregistrer.
+
+Définir les bons droits :
+
+```bash
+sudo chmod 700 /home/runner/.ssh
+sudo chmod 600 /home/runner/.ssh/authorized_keys
+sudo chown -R runner:runner /home/runner/.ssh
+```
+
+---
+
+### ✅ Vérification de la connexion
+
+Depuis `runner-host` :
+
+```bash
+ssh runner@IP_DU_DOCKER_HOST
+```
+
+Si la connexion se fait sans mot de passe : **la liaison SSH est opérationnelle.**
 ```
 
 > Copie la clé affichée pour la coller sur le serveur Docker.
