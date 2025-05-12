@@ -4,25 +4,37 @@
 
 ## 🧱 Prérequis
 
-- Une machine Linux avec accès `sudo`
-- Docker installé
-- GitLab auto-hébergé : https://gitlab.techwave.lab
+- Une **VM Debian** dédiée pour exécuter les pipelines CI/CD (c’est ta machine GitLab Runner)
+- Une instance GitLab auto-hébergée : https://gitlab.techwave.lab
 - Un compte GitLab avec droits de création de projet
+- Projet cible : [`runner-test-najuma`](https://gitlab.techwave.lab/salle-8/runner-test-najuma.git)
+
+> ⚠️ **Important** :  
+> Ne pas installer Docker ni GitLab Runner sur le serveur GitLab (`gitlab.techwave.lab`).  
+> Ces outils doivent être installés sur ta **VM Debian**, qui servira de machine GitLab Runner.
 
 ---
 
-## 🧪 Étape 1 – Créer un projet GitLab
+## 🔎 Comprendre l’architecture
 
-1. Se connecter à https://gitlab.techwave.lab
-2. Cliquer sur **"Nouveau projet"**
-3. Sélectionner **"Projet vide"**
-4. Nommer le projet `runner-test`
-5. Choisir la visibilité (privé ou public)
-6. Cliquer sur **"Créer un projet"**
+| Machine                  | Rôle                                     | Docker + GitLab Runner |
+|--------------------------|------------------------------------------|--------------------------|
+| 💻 `gitlab.techwave.lab` | Héberge l’interface GitLab et les projets | ❌ Non                   |
+| 🏃 VM Debian             | Exécute les pipelines (GitLab Runner)     | ✅ Oui                   |
 
 ---
 
-## 🐳 Étape 2 – Installer Docker
+## 🧪 Étape 1 – Créer un projet GitLab (si ce n'est pas déjà fait)
+
+1. Se connecter à [https://gitlab.techwave.lab](https://gitlab.techwave.lab)
+2. Aller dans le groupe `salle-8`
+3. Créer un **nouveau projet vide**
+4. Nommer : `runner-test-najuma`
+5. Cliquer sur **"Créer un projet"**
+
+---
+
+## 🐳 Étape 2 – Installer Docker (sur la VM Debian GitLab Runner)
 
 ```bash
 sudo apt update
@@ -32,16 +44,16 @@ sudo systemctl start docker
 sudo usermod -aG docker $USER
 ```
 
-> ℹ️ Déconnecte-toi / reconnecte-toi après l’ajout au groupe `docker`.
+> 🔁 Déconnecte-toi / reconnecte-toi pour appliquer les droits au groupe `docker`.
 
-Test Docker :
+Tester Docker :
 ```bash
 docker run hello-world
 ```
 
 ---
 
-## 🏃 Étape 3 – Installer GitLab Runner
+## 🏃 Étape 3 – Installer GitLab Runner (sur la même VM Debian)
 
 ```bash
 curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
@@ -55,42 +67,42 @@ gitlab-runner --version
 
 ---
 
-## 🔗 Étape 4 – Enregistrer le Runner dans GitLab
+## 🔗 Étape 4 – Enregistrer le runner dans GitLab
 
-1. Aller dans ton projet `runner-test`
+1. Aller dans ton projet [`runner-test-najuma`](https://gitlab.techwave.lab/salle-8/runner-test-najuma)
 2. Menu **Paramètres > CI/CD > Runners > Développer**
 3. Copier :
    - **URL GitLab** : `https://gitlab.techwave.lab/`
    - **Jeton d'enregistrement**
 
-Enregistrement du runner :
+Sur la VM Debian :
+
 ```bash
 sudo gitlab-runner register
 ```
 
 Répondre comme suit :
 
-| Question                             | Réponse                                        |
-|--------------------------------------|------------------------------------------------|
-| GitLab instance URL                  | `https://gitlab.techwave.lab/`                |
-| Token d'enregistrement               | Le token GitLab copié                         |
-| Description du runner                | `runner-docker-local`                         |
-| Tags                                 | `docker` (optionnel)                          |
-| Executor                             | `docker`                                      |
-| Image Docker par défaut              | `alpine:latest` (ou `python:3.11`, etc.)      |
+| Question                             | Réponse                                                  |
+|--------------------------------------|-----------------------------------------------------------|
+| GitLab instance URL                  | `https://gitlab.techwave.lab/`                           |
+| Registration token                   | Le token GitLab copié                                    |
+| Description                          | `runner-docker-najuma`                                   |
+| Tags                                 | `docker` *(optionnel)*                                   |
+| Executor                             | `docker`                                                  |
+| Default Docker image                 | `alpine:latest` *(ou autre selon ton besoin)*            |
 
 ---
 
-## ⚙️ Étape 5 – Créer le fichier `.gitlab-ci.yml`
-
-Sur ta machine locale :
+## ⚙️ Étape 5 – Créer un fichier `.gitlab-ci.yml` localement
 
 ```bash
-mkdir runner-test && cd runner-test
+mkdir runner-test-najuma && cd runner-test-najuma
 git init
 ```
 
-Créer le fichier :
+Créer le fichier `.gitlab-ci.yml` :
+
 ```yaml
 stages:
   - test
@@ -99,37 +111,33 @@ test_job:
   stage: test
   image: alpine:latest
   script:
-    - echo "🎉 GitLab CI avec Docker fonctionne !"
+    - echo "🎉 GitLab Runner fonctionne avec Docker !"
     - uname -a
 ```
 
 ---
 
-## 📤 Étape 6 – Pousser le projet dans GitLab
-
-Ajouter l’origine Git et pousser :
+## 📤 Étape 6 – Lier ton dépôt local au projet GitLab
 
 ```bash
-git remote add origin https://gitlab.techwave.lab/<ton-user>/runner-test.git
+git remote add origin https://gitlab.techwave.lab/salle-8/runner-test-najuma.git
 git add .
-git commit -m "Test pipeline avec Docker"
+git commit -m "Ajout du pipeline test"
 git push -u origin master
 ```
 
-> Remplacer `<ton-user>` par ton nom d’utilisateur GitLab.
+---
+
+## ✅ Étape 7 – Vérifier le pipeline dans GitLab
+
+1. Accéder au projet : `https://gitlab.techwave.lab/salle-8/runner-test-najuma`
+2. Aller dans **CI/CD > Pipelines**
+3. Le pipeline se lance automatiquement
+4. Cliquer sur le job pour voir les logs d’exécution
 
 ---
 
-## ✅ Étape 7 – Vérifier l’exécution du pipeline
-
-1. Aller sur https://gitlab.techwave.lab
-2. Accéder à ton projet > **CI/CD > Pipelines**
-3. Un pipeline doit s'exécuter automatiquement
-4. Cliquer dessus pour visualiser les logs du job
-
----
-
-## 🧩 Exemple de `.gitlab-ci.yml` plus avancé
+## 🧩 Exemple de pipeline plus avancé
 
 ```yaml
 stages:
@@ -145,21 +153,21 @@ build_image:
     DOCKER_DRIVER: overlay2
   script:
     - docker version
-    - echo "build OK"
+    - echo "Build terminé"
 
 test_python:
   stage: test
   image: python:3.11
   script:
     - python --version
-    - echo "tests OK"
+    - echo "Tests OK"
 ```
 
 ---
 
-## 📌 Commandes utiles
+## 📌 Commandes utiles sur la VM Debian (Runner)
 
-Voir la config locale :
+Afficher la config :
 ```bash
 sudo cat /etc/gitlab-runner/config.toml
 ```
@@ -174,9 +182,7 @@ Redémarrer le runner :
 sudo gitlab-runner restart
 ```
 
-Mettre à jour le runner :
+Mettre à jour GitLab Runner :
 ```bash
 sudo gitlab-runner upgrade
 ```
-
-
