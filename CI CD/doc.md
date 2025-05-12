@@ -236,21 +236,28 @@ gitlab-runner --version
 
 ---
 
+---
+
 ## 🔗 ÉTAPE 5 — Enregistrer le runner via SSH
 
 ### Depuis l’interface GitLab :
 
-Rends-toi dans :
+Rends-toi dans le projet :
 
 **Projet :** `Salle-8 / runner-test-Najuma`  
-➡️ `Settings > CI/CD > Runners > New project runner`
+Navigue vers :
+
+- **Français** : `Paramètres > CI/CD > Runners > Nouveau runner de projet`
+- **English** : `Settings > CI/CD > Runners > New project runner`
 
 Remplis les champs suivants :
 
-- **Description** : `runner-docker-najuma`
-- **Tags** : `ssh, docker`
-- **Options** : Cocher `Run untagged jobs`, `Protected`, et `Lock to current project`
-- **Token** : Copier le token affiché
+- **Description / Description** : `runner-docker-najuma`
+- **Tags / Étiquettes** : `ssh, docker`
+- **Options** :
+  - ✅ **Français** : Cocher `Exécuter les jobs sans étiquette`, `Protégé`, et `Limiter au projet actuel`
+  - ✅ **English** : Check `Run untagged jobs`, `Protected`, and `Lock to current project`
+- **Token / Jeton** : Copier le jeton affiché
 
 ---
 
@@ -265,12 +272,12 @@ sudo gitlab-runner register
 Répondre aux questions comme suit :
 
 - **URL GitLab** : `https://gitlab.techwave.lab/`
-- **Token** : (coller le token copié)
-- **Description** : `runner-docker-najuma`
-- **Tags** : `ssh,docker`
-- **Executor** : `ssh`
+- **Token / Jeton** : (coller le jeton copié)
+- **Description / Description** : `runner-docker-najuma`
+- **Tags / Étiquettes** : `ssh,docker`
+- **Executor / Exécuteur** : `ssh`
 - **Adresse SSH** : `runner@10.108.0.102`
-- **Chemin de la clé privée SSH** : `/home/gitlab-runner/.ssh/id_ed25519`
+- **Chemin de la clé privée SSH / Private key path** : `/home/gitlab-runner/.ssh/id_ed25519`
 
 ## 🗂️ ÉTAPE 6 — Préparer les environnements `/opt/app/test` et `/opt/app/prod` sur `docker-host`
 
@@ -366,11 +373,4 @@ Livrer manuellement en production après validation. Le pipeline associé à `ma
 
 ---
 
-## 🛠️ Commandes utiles GitLab Runner
-
-```bash
-sudo cat /etc/gitlab-runner/config.toml
-sudo gitlab-runner list
-sudo gitlab-runner restart
-sudo gitlab-runner upgrade
-```
+## 
