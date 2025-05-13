@@ -238,6 +238,28 @@ gitlab-runner --version
 
 ---
 
+---
+
+## 🛠️ AVANT ÉTAPE 5 — Assurer la résolution DNS de GitLab
+
+Si votre GitLab auto-hébergé n'est pas enregistré dans un DNS public ou interne, vous devez forcer sa résolution dans le fichier `/etc/hosts` de la machine `runner-host`.
+
+### Sur `runner-host` :
+
+```bash
+sudo nano /etc/hosts
+```
+
+Ajouter cette ligne tout en bas (⚠️ adaptez l'IP si besoin) :
+
+```bash
+10.100.0.203 gitlab.techwave.lab
+```
+
+💡 Cela permet à la commande `gitlab-runner register` de contacter votre instance GitLab.
+
+---
+
 ## 🔗 ÉTAPE 5 — Enregistrer le runner via SSH
 
 ### Depuis l’interface GitLab :
@@ -278,6 +300,101 @@ Répondre aux questions comme suit :
 - **Executor / Exécuteur** : `ssh`
 - **Adresse SSH** : `runner@10.108.0.102`
 - **Chemin de la clé privée SSH / Private key path** : `/home/gitlab-runner/.ssh/id_ed25519`
+
+---
+
+## ❗ Problème possible — Erreur de vérification TLS (x509 SAN)
+
+Si vous obtenez cette erreur lors de l'enregistrement du runner :
+
+```
+tls: failed to verify certificate: x509: certificate relies on legacy Common Name field, use SANs instead
+```
+
+### 🧠 Explication :
+
+Depuis Go 1.15+, utilisé par GitLab Runner, les certificats SSL **doivent** inclure un champ `Subject Alternative Name (SAN)`.  
+Un certificat qui n’a qu’un `Common Name` (CN) est considéré comme invalide.
+
+Cela peut arriver si votre GitLab auto-hébergé utilise un certificat SSL auto-signé ou mal généré.
+
+---
+
+### ✅ Solution rapide (si GitLab est de confiance) : ignorer la vérification TLS
+
+Ajoutez l’option `--tls-skip-verify` à la commande `register` :
+
+```bash
+sudo gitlab-runner register --tls-skip-verify   --url https://gitlab.techwave.lab   --token VOTRE_TOKEN_ICI
+```
+
+⚠️ À n'utiliser que si :
+- le GitLab est en interne
+- vous faites confiance à votre certificat
+
+---
+
+### 🔐 Solution recommandée (production) : recréer un certificat valide
+
+Il faut générer un certificat avec une section `[ alt_names ]` :
+
+```ini
+[ alt_names ]
+DNS.1 = gitlab.techwave.lab
+```
+
+Et inclure cette section dans la configuration OpenSSL lors de la création du certificat.
+
+---
+
+## ⚠️ Note : `gitlab-runner verify` peut échouer malgré une configuration correcte
+
+Même si le fichier `/etc/gitlab-runner/config.toml` contient bien `tls_skip_verify = true`,  
+la commande suivante peut toujours échouer :
+
+```bash
+sudo gitlab-runner verify
+```
+
+Erreur typique :
+
+```
+tls: failed to verify certificate: x509: certificate relies on legacy Common Name field, use SANs instead
+```
+
+### ✅ Pourquoi ce n’est pas bloquant :
+
+La commande `verify` utilise une vérification TLS stricte **qui ne respecte pas le champ `tls_skip_verify`**, mais **le runner fonctionnera quand même dans les jobs CI/CD**, car cette vérification est contournée au moment de l'exécution réelle.
+
+---
+
+## ✅ Étape recommandée : tester avec un pipeline GitLab
+
+Ajoute ce fichier `.gitlab-ci.yml` à la racine de ton dépôt :
+
+```yaml
+stages:
+  - test
+
+test_job:
+  stage: test
+  tags:
+    - ssh
+    - docker
+  script:
+    - echo "🎉 Runner SSH + Docker opérationnel"
+    - docker ps
+```
+
+Puis pousse sur ta branche GitLab :
+
+```bash
+git add .gitlab-ci.yml
+git commit -m "test: runner SSH + Docker"
+git push origin main
+```
+
+➡️ Vérifie dans **GitLab > CI/CD > Pipelines** que le job se lance.
 
 ## 🗂️ ÉTAPE 6 — Préparer les environnements `/opt/app/test` et `/opt/app/prod` sur `docker-host`
 
@@ -373,4 +490,107 @@ Livrer manuellement en production après validation. Le pipeline associé à `ma
 
 ---
 
-## 
+## 🛠️ Commandes utiles GitLab Runner
+
+```bash
+sudo cat /etc/gitlab-runner/config.toml
+sudo gitlab-runner list
+sudo gitlab-runner restart
+sudo gitlab-runner upgrade
+```
+
+---
+
+## 🛠️ Alternative — Enregistrer un runner avec certificat TLS invalide
+
+Si votre GitLab auto-hébergé utilise un certificat sans SAN (erreur `x509: certificate relies on legacy Common Name field`), l’enregistrement `gitlab-runner register` échouera même avec `GITLAB_RUNNER_TLS_SKIP_VERIFY`.
+
+Voici une méthode manuelle pour contourner ce problème :
+
+---
+
+### 1. Créer un fichier de configuration temporaire
+
+```bash
+mkdir -p ~/runner-register-tmp
+cd ~/runner-register-tmp
+nano config.toml
+```
+
+### 2. Contenu à coller dans `config.toml` :
+
+```toml
+[[runners]]
+  name = "runner-docker-najuma"
+  url = "https://gitlab.techwave.lab"
+  token = "glrt-t3_Jx3AdWooQETz35Zwvrjs"
+  tls_skip_verify = true
+  executor = "ssh"
+  [runners.ssh]
+    user = "runner"
+    host = "10.108.0.102"
+    identity_file = "/home/gitlab-runner/.ssh/id_ed25519"
+    disable_strict_host_key_checking = true
+```
+
+Enregistre le fichier (`Ctrl + O`, `Entrée`, puis `Ctrl + X` pour quitter).
+
+---
+
+### 3. Copier ce fichier dans la configuration GitLab Runner
+
+```bash
+sudo cp config.toml /etc/gitlab-runner/config.toml
+sudo chown gitlab-runner:gitlab-runner /etc/gitlab-runner/config.toml
+```
+
+---
+
+### 4. Redémarrer et vérifier le runner
+
+```bash
+sudo gitlab-runner restart
+sudo gitlab-runner verify
+```
+
+---
+
+## 🧪 Créer le fichier `.gitlab-ci.yml` de test
+
+Sur ta machine locale (ou sur une VM clonée du repo GitLab), crée un fichier `.gitlab-ci.yml` pour tester le runner :
+
+```bash
+cd ~/chemin/vers/ton/projet
+nano .gitlab-ci.yml
+```
+
+Colle ce contenu dans le fichier :
+
+```yaml
+stages:
+  - test
+
+test_job:
+  stage: test
+  tags:
+    - ssh
+    - docker
+  script:
+    - echo "🎉 Runner SSH + Docker opérationnel"
+    - docker ps
+```
+
+Sauvegarde avec `Ctrl + O`, puis quitte `nano` avec `Ctrl + X`.
+
+---
+
+### 💾 Enregistre et pousse le fichier dans GitLab
+
+```bash
+git add .gitlab-ci.yml
+git commit -m "test: runner SSH + Docker"
+git push origin main
+```
+
+➡️ Puis vérifie dans l’interface GitLab que le pipeline est bien lancé :  
+**GitLab > CI/CD > Pipelines**
