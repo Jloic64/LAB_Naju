@@ -565,8 +565,6 @@ Vérifiez dans l'interface GitLab (`CI/CD > Pipelines`) que le job se lance et s
 
 ## 1️⃣1️⃣ Ajout des variables d'environnement GitLab
 
-## 1️⃣1️⃣ Ajout des variables d'environnement GitLab
-
 ### 🎯 Ajout et utilisation de la variable APP_ENV dans tout le pipeline CI/CD
 
 1. Dans GitLab, aller dans `Settings > CI/CD > Variables`
