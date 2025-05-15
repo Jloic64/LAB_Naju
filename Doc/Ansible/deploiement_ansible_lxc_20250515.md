@@ -1,6 +1,13 @@
 
 # 🚀 Déploiement d’un environnement Ansible sur un conteneur LXC Debian 12
 
+## 🌐 Tableau de l’infrastructure utilisée
+
+| Nom de machine        | Adresse IP       | Rôle / Utilisation                          |
+|-----------------------|------------------|---------------------------------------------|
+| SRV-DEB-LXCANSIBLE    | 10.108.0.150     | Machine de contrôle Ansible (LXC)           |
+| SRV-DEB12             | 10.108.0.151     | Machine cible Debian 12 (VM)                |
+
 ## 🧾 Objectif
 Ce guide décrit étape par étape l'installation et la configuration d'Ansible sur un conteneur LXC Debian 12,
 ainsi que la configuration d'une machine Debian distante (VM) pour être gérée via Ansible. Chaque commande est accompagnée d'explications détaillées.
@@ -160,7 +167,7 @@ ansible-playbook -i ~/ansible/inventory.ini setup.yaml
 
 ---
 
-## 📸 Captures de vérification du TD 5
+## 📸 Captures de vérification 
 
 ### ✅ Résultat de l'exécution du playbook
 <p align="center">
