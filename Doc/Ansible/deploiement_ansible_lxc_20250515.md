@@ -14,7 +14,7 @@ ainsi que la configuration d'une machine Debian distante (VM) pour être gérée
 
 ---
 
-## 🖥️ 0. Création de la machine cible Debian 12 (VM)
+# 🖥️ 0. Création de la machine cible Debian 12 (VM)
 
 ### 🎯 Objectif :
 Préparer une machine distante que le LXC Ansible pourra gérer via SSH.
@@ -36,7 +36,7 @@ chmod 440 /etc/sudoers.d/ansible
 
 ---
 
-## 🧱 1. Création du conteneur LXC Debian 12 (Machine de contrôle Ansible)
+# 🧱 1. Création du conteneur LXC Debian 12 (Machine de contrôle Ansible)
 
 ### 🎯 Objectif :
 Créer le poste de contrôle qui exécutera les commandes Ansible.
@@ -48,7 +48,7 @@ Créer le poste de contrôle qui exécutera les commandes Ansible.
 
 ---
 
-## 🛠️ 2. Préparation du LXC Ansible
+# 🛠️ 2. Préparation du LXC Ansible
 
 ### 🔧 Étapes à réaliser connecté en root :
 
@@ -63,7 +63,7 @@ chmod 440 /etc/sudoers.d/ansible
 
 ---
 
-## 🔐 3. Génération et déploiement de la clé SSH
+# 🔐 3. Génération et déploiement de la clé SSH
 
 ### 🎯 Objectif :
 Permettre à la machine de contrôle d’accéder à la machine cible sans mot de passe.
@@ -382,5 +382,106 @@ getent passwd loic_stagiaire
 <p align="center">
   <img src="./td6_verification_cm_loic.png" alt="Verification cmatrix et utilisateur loic_stagiaire" style="width: 800px;" />
 </p>
+
+---
+
+# 📚– Découverte des rôles Ansible (version enrichie)
+
+
+Structurer ses automatisations Ansible de manière modulaire, maintenable, réutilisable grâce aux **rôles Ansible**.
+
+Quand les playbooks deviennent longs, il devient difficile de les lire, maintenir et faire évoluer.  
+➡️ La solution : **organiser les tâches par fonctionnalité** dans des rôles distincts.
+
+---
+
+## 🧠 Pourquoi utiliser des rôles dans Ansible ?
+
+| Avantage            | Description                                                                 |
+|---------------------|---------------------------------------------------------------------------------|
+| ✅ **Modularité**    | Chaque rôle s’occupe d’un aspect précis (ex : users, apache, monitoring…)      |
+| 🔁 **Réutilisabilité** | Un rôle peut être réutilisé dans plusieurs projets ou sur plusieurs hôtes      |
+| 🧼 **Lisibilité**     | On évite les playbooks de 200 lignes. Tout est rangé dans des dossiers clairs. |
+| 🔒 **Maintenabilité** | Corriger ou enrichir une fonctionnalité n’impacte pas les autres               |
+| 🌐 **Interopérabilité** | Les rôles sont partageables sur Ansible Galaxy                                 |
+
+> 💡 Source : [Playbook Best Practices – Ansible Docs](https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html)
+
+---
+
+## 📁 Structure standard d’un rôle
+
+Quand tu crées un rôle avec :
+
+```bash
+ansible-galaxy init mon_role
+```
+
+Ansible génère :
+
+```plaintext
+mon_role/
+├── defaults/          # Variables par défaut
+├── files/             # Fichiers statiques
+├── handlers/          # Déclencheurs (ex : restart nginx)
+├── meta/              # Infos dépendances du rôle
+├── tasks/             # Tâches principales (main.yml)
+├── templates/         # Modèles Jinja2
+├── tests/             # Fichiers de test facultatifs
+└── vars/              # Variables prioritaires (non surchargeables)
+```
+
+> 📌 `defaults/` est recommandé pour les variables configurables, tandis que `vars/` est prioritaire mais non surchargé.
+
+---
+
+## 🛠 Exemple minimal d’utilisation d’un rôle dans un playbook
+
+```yaml
+- name: Déploiement base + utilisateurs
+  hosts: SRV-DEB12
+  become: yes
+
+  roles:
+    - role: base
+    - role: users
+```
+
+Ce playbook exécute les tâches dans :
+
+- `roles/base/tasks/main.yml`
+- puis `roles/users/tasks/main.yml`
+
+Cela permet d’avoir un **playbook principal clair et maintenable**.
+
+---
+
+## 📦 Où trouver ou partager des rôles ?
+
+- 🌐 Ansible Galaxy : [galaxy.ansible.com](https://galaxy.ansible.com)
+- 🔍 Exemples :
+  - [geerlingguy.apache](https://galaxy.ansible.com/geerlingguy/apache)
+  - [dev-sec.ssh-hardening](https://galaxy.ansible.com/dev-sec/ssh-hardening)
+
+---
+
+## 📚 Ressources complémentaires
+
+- 📘 [Documentation officielle des rôles Ansible](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html)
+- 🧠 [Best Practices – Ansible Docs](https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html)
+- ✍️ [Blog de Stéphane Robert – Écrire des rôles Ansible](https://blog.stephane-robert.info/docs/infra-as-code/gestion-de-configuration/ansible/ecrire-roles/)
+
+---
+
+## 🧾 À retenir
+
+Un rôle Ansible est un **module autonome et structuré**, contenant :
+- des tâches (dans `tasks/main.yml`)
+- des fichiers statiques (`files/`)
+- des modèles (`templates/`)
+- des variables (`defaults/`, `vars/`)
+- des handlers (`handlers/`)
+
+👉 C’est la **méthode recommandée** pour gérer des projets professionnels avec Ansible.
 
 ---
