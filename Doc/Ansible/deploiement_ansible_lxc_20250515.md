@@ -110,7 +110,7 @@ SRV-DEB12 | SUCCESS => { "ping": "pong" }
 
 ---
 
-## 📦 Créer et lancer un premier playbook Ansible
+# 📦 Créer et lancer un premier playbook Ansible
 
 ### 📁 Structure
 
@@ -253,7 +253,7 @@ getent passwd loic_stagiaire
 
 ---
 
-## 🧪  Écrire un playbook Ansible simple
+# 🧪  Écrire un playbook Ansible simple
 
 Ce playbook Ansible réalise deux tâches :
 1. Installe le paquet `cmatrix`
@@ -581,4 +581,122 @@ sudo cat /home/loic_technicien/.ssh/authorized_keys
 
 ---
 
+# 📚 Utiliser un handler dans un playbook Ansible
+
+### 🎯 Objectif
+
+Découvrir le mécanisme des **handlers (gestionnaires)** dans Ansible :  
+🔁 des actions différées, déclenchées **seulement si nécessaire**, à la fin d’un playbook ou d’un bloc.
+
+C’est le système idéal pour :
+- ⚙️ Redémarrer un service seulement si un fichier de config a été modifié
+- 🔁 Relancer un daemon uniquement en cas de changement
+- 🧹 Exécuter une commande **conditionnelle et différée**
+
+---
+
+## 🔍 Définition d’un handler
+
+> Un handler est une **tâche spéciale**, définie dans une section `handlers`, qui **n'est appelée que si elle est "notifiée" (`notify`)**.
+
+---
+
+## 🧱 Structure minimale avec handler
+
+```yaml
+- name: Playbook avec handler
+  hosts: SRV-DEB12
+  become: yes
+
+  tasks:
+    - name: Copier un fichier de configuration
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify: Redemarrer nginx
+
+  handlers:
+    - name: Redemarrer nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+```
+
+---
+
+### 🧠 Explication détaillée
+
+| Élément       | Description |
+|---------------|-------------|
+| `notify`      | Si la tâche qui précède modifie le système, le handler nommé est **mis en file** |
+| `handlers:`   | Section spéciale, en dehors des `tasks`, qui contient les actions différées |
+| `state: restarted` | Le service sera redémarré **seulement si notify a été déclenché** |
+
+---
+
+## 💡 Pourquoi c’est puissant ?
+
+Imagine ce scénario :
+
+```yaml
+- name: Modifier un fichier
+  copy:
+    src: nouveau.conf
+    dest: /etc/monapp.conf
+  notify: Recharger monapp
+```
+
+- Si le fichier **n’est pas modifié**, **rien ne se passe**
+- Si le fichier **est modifié**, alors à la fin du playbook, le handler `Recharger monapp` sera **exécuté une seule fois**
+
+> 💡 Cela évite les redémarrages inutiles et améliore la performance et la fiabilité des déploiements.
+
+---
+
+## 🧪 Exemple réel : Recharger `nginx` uniquement si sa conf a changé
+
+```yaml
+tasks:
+  - name: Deployer la conf nginx
+    template:
+      src: nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+    notify: Restart nginx
+
+handlers:
+  - name: Restart nginx
+    service:
+      name: nginx
+      state: restarted
+```
+
+🧠 Si `nginx.conf` est déjà identique → pas de redémarrage.  
+🧠 Si `nginx.conf` est modifié → `Restart nginx` sera **appelé une seule fois à la fin**.
+
+---
+
+## 🧬 Spécificités techniques
+
+- Les `handlers:` doivent être **au même niveau que `tasks:`**, ou dans un rôle (`roles/monrole/handlers/main.yml`)
+- On peut **notifier plusieurs handlers**
+- Un handler peut être appelé **depuis plusieurs tâches**
+- Les handlers sont **exécutés une seule fois** même si plusieurs `notify` l’ont déclenché
+
+---
+
+## 📘 Sources utiles
+
+- 📗 [Handlers — Ansible Docs](https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#handlers-running-operations-on-change)
+- 🧑‍🏫 [Stéphane Robert — Ansible Handlers](https://blog.stephane-robert.info/docs/infra-as-code/gestion-de-configuration/ansible/handlers/)
+- 🔎 [Best Practices Handlers](https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html#handlers)
+
+---
+
+## ✅ À retenir
+
+- Les handlers sont des **actions différées et conditionnelles**
+- Ils sont **exécutés uniquement si une tâche "notifie" leur exécution**
+- C’est un outil essentiel pour automatiser intelligemment sans faire de redondance
+
+---
 
