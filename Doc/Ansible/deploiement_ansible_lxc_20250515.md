@@ -485,3 +485,100 @@ Un rôle Ansible est un **module autonome et structuré**, contenant :
 👉 C’est la **méthode recommandée** pour gérer des projets professionnels avec Ansible.
 
 ---
+
+## 🧪 Utiliser les rôles Ansible dans un playbook
+
+### 🎯 Objectif
+Créer un rôle `users` pour :
+- Créer un utilisateur `loic_technicien`
+- Injecter une clé publique SSH depuis `files/id_rsa.pub`
+- Appliquer le rôle via un playbook `site.yml`
+
+---
+
+### 📁 Étape 1 – Créer la structure du projet
+
+```bash
+mkdir -p ~/ansible/projet-2/roles
+cd ~/ansible/projet-2
+```
+
+---
+
+### 🛠️ Étape 2 – Initialiser le rôle `users`
+
+```bash
+ansible-galaxy init roles/users
+```
+
+---
+
+### 🔑 Étape 3 – Copier la clé publique
+
+```bash
+cp ~/ansible/projet-1/files/id_rsa.pub ~/ansible/projet-2/roles/users/files/
+```
+
+---
+
+### 📝 Étape 4 – Ajouter les tâches dans `roles/users/tasks/main.yml`
+
+```yaml
+- name: Creer l'utilisateur loic_technicien
+  ansible.builtin.user:
+    name: loic_technicien
+    shell: /bin/bash
+    create_home: yes
+
+- name: Ajouter la cle SSH a loic_technicien
+  ansible.posix.authorized_key:
+    user: loic_technicien
+    state: present
+    manage_dir: yes
+    key: "{{ lookup('file', 'files/id_rsa.pub') }}"
+```
+
+---
+
+### 📄 Étape 5 – Créer le playbook `site.yml`
+
+```yaml
+- name: Execution du role users
+  hosts: SRV-DEB12
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+
+  roles:
+    - users
+```
+
+---
+
+### ▶️ Étape 6 – Exécuter le playbook
+
+```bash
+ansible-playbook -i ~/ansible/inventory.ini site.yml
+```
+
+<p align="center">
+  <img src="./tp09_execution_site_yml.png" style="width: 800px;" />
+</p>
+
+---
+
+### ✅ Étape 7 – Vérification sur la machine distante
+
+```bash
+getent passwd loic_technicien
+ls -ld /home/loic_technicien
+sudo cat /home/loic_technicien/.ssh/authorized_keys
+```
+
+<p align="center">
+  <img src="./tp09_verification_loic_technicien.png" style="width: 800px;" />
+</p>
+
+---
+
+
