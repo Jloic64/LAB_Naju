@@ -1,0 +1,1 @@
+# Projet de démonstration pour l'apprentissage de Gitlab CI/CD

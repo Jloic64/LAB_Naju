@@ -1,0 +1,30 @@
+services:
+  monapp:
+    image: ${APP_IMAGE}
+    container_name: ${APP_NAME}
+    environment:
+      APP_ENV: ${APP_ENV}
+    depends_on:
+      - redis
+    ports:
+      - "${APP_PORT}:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - monreseau
+
+  redis:
+    image: redis
+    container_name: ${REDIS_NAME}
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - monreseau
+    volumes:
+      - /data/prod:/data
+
+networks:
+  monreseau:
