@@ -654,7 +654,7 @@ git push origin main
 
 ---
 
-# 🧑‍💼 Mode d'emploi utilisateur (non expert)
+# 🧑‍💼 Mode d'emploi utilisateur 
 
 ## 🔧 Pour modifier le projet en développement
 
@@ -675,7 +675,7 @@ git push origin main
    ```
    > ℹ️ Remplacez "ma-nouvelle-fonctionnalite" par un nom court mais descriptif de ce que vous allez faire
 
-3. **Modifier les fichiers** dans votre éditeur préféré
+3. **Modifier les fichiers** dans vs code
    - Travaillez dans le répertoire `/home/loic/code_source/`
    - Testez vos modifications localement avant de les pousser
 
@@ -1004,7 +1004,5 @@ Le GitLab Runner est l'agent qui exécute les jobs de votre pipeline CI/CD. Il e
 1. Désinscrire l'ancien runner : `sudo gitlab-runner unregister --name "runner-docker-najuma"`
 2. Suivre à nouveau la procédure d'enregistrement (section 5)
 
----
 
----
 

@@ -700,3 +700,591 @@ handlers:
 
 ---
 
+# 🧪 Utiliser les variables dans un playbook Ansible (TP 15)
+
+### 🎯 Objectif
+Ce TP a pour but de définir une variable contenant une liste d’utilisateurs dans un rôle Ansible, d’utiliser cette variable pour créer plusieurs utilisateurs via une boucle, de permettre sa surcharge dans le playbook principal, et de déployer le rôle sur une machine distante Debian 12.
+
+---
+
+## 📁 Structure du projet
+
+```bash
+mkdir -p ~/ansible/projet-3
+cd ~/ansible/projet-3
+ansible-galaxy init roles/users
+```
+
+---
+
+## 🧾 Définir une variable par défaut dans le rôle
+
+```bash
+nano roles/users/defaults/main.yml
+```
+
+Contenu du fichier :
+
+```yaml
+users_list:
+  - alice
+  - bob
+```
+
+---
+
+## 🧾 Utiliser la variable dans les tâches du rôle
+
+```bash
+nano roles/users/tasks/main.yml
+```
+
+Contenu :
+
+```yaml
+- name: Créer les utilisateurs depuis users_list
+  ansible.builtin.user:
+    name: "{{ item }}"
+    shell: /bin/bash
+    create_home: yes
+  loop: "{{ users_list }}"
+```
+
+---
+
+## 📄 Créer le playbook principal `site.yml` (avec variables par défaut)
+
+```bash
+nano site.yml
+```
+
+Contenu :
+
+```yaml
+- name: Création d’utilisateurs (par défaut)
+  hosts: SRV-DEB12
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+
+  roles:
+    - users
+```
+
+---
+
+## ▶️ Exécution avec les variables par défaut
+
+```bash
+ansible-playbook -i ~/ansible/inventory.ini site.yml
+```
+
+Vérification sur la machine distante :
+
+```bash
+getent passwd alice
+getent passwd bob
+```
+
+---
+
+## 🔁 Surcharger la variable dans le playbook
+
+```bash
+nano site.yml
+```
+
+Contenu modifié :
+
+```yaml
+- name: Création d’utilisateurs (surchargée)
+  hosts: SRV-DEB12
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+
+  vars:
+    users_list:
+      - charlie
+      - david
+
+  roles:
+    - users
+```
+
+---
+
+## ▶️ Exécution avec variable surchargée
+
+```bash
+ansible-playbook -i ~/ansible/inventory.ini site.yml
+```
+
+Vérification :
+
+```bash
+getent passwd charlie
+getent passwd david
+```
+
+---
+
+## ✅ À retenir
+
+- Les variables par défaut sont placées dans `defaults/main.yml`.
+- Les variables peuvent être surchargées directement dans le playbook avec `vars:`.
+- Le module `user` est utilisé avec `loop` pour parcourir la liste des utilisateurs.
+- La structure permet la réutilisabilité du rôle avec différentes listes d’utilisateurs.
+
+---
+
+## 📁 Structure finale du projet
+
+```
+projet-3/
+├── site.yml
+├── inventory.ini
+└── roles/
+    └── users/
+        ├── defaults/
+        │   └── main.yml
+        └── tasks/
+            └── main.yml
+```
+
+---
+
+## 📘 Références utiles
+
+- https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html
+- https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html
+- https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
+
+# 📘 Cours 17 — Découvrir les templates Jinja2
+
+## 🧠 Qu’est-ce qu’un template dans Ansible ?
+
+Un template est un fichier texte contenant des **variables dynamiques** (encadrées par `{{ }}`), des **structures de contrôle** (if, for, etc.), qui sera **transformé par Ansible** en un fichier de configuration final ou un document.
+
+Ansible utilise **Jinja2** comme moteur de templating.
+
+---
+
+## 🔍 Pourquoi utiliser les templates ?
+
+- 💡 Générer dynamiquement des fichiers de configuration (HTML, conf NGINX, fichiers YAML, etc.)
+- 🔁 Réutiliser un même modèle avec différentes valeurs
+- 📦 Faciliter la gestion de configuration multi-machines
+
+---
+
+## 🧩 Exemple simple de template Jinja2
+
+Template `index.html.j2` :
+
+```html
+<h1>Bienvenue sur {{ inventory_hostname }}</h1>
+```
+
+Résultat généré sur une machine `SRV-DEB12` :
+
+```html
+<h1>Bienvenue sur SRV-DEB12</h1>
+```
+
+---
+
+## 📘 Commande utilisée pour traiter un template :
+
+```yaml
+- name: Déployer un template
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+```
+
+Ce module va :
+1. Charger `index.html.j2`
+2. Remplacer toutes les variables par leur valeur réelle
+3. Copier le résultat à la destination `dest`
+
+---
+
+## ⚙️ Variables utilisables dans un template
+
+- `inventory_hostname` → nom de l’hôte cible
+- `ansible_hostname` → nom d’hôte court
+- `ansible_facts` → toutes les infos système
+- `hostvars['nom']` → variables d’un autre hôte
+- Tu peux aussi utiliser des variables définies dans :
+  - `group_vars/`, `host_vars/`
+  - ou directement dans le playbook
+
+---
+
+## 🔁 Bonus : structures de contrôle Jinja2 dans un template
+
+```jinja
+{% if ansible_distribution == "Debian" %}
+Ce serveur est sous Debian.
+{% else %}
+Système inconnu.
+{% endif %}
+```
+
+```jinja
+<ul>
+{% for user in users_list %}
+  <li>{{ user }}</li>
+{% endfor %}
+</ul>
+```
+
+---
+
+# ✅ Vérification du TP 18 – Template Jinja2 et handler nginx
+
+## 🎯 Objectif
+Valider que le déploiement du fichier HTML via template Jinja2 s’est bien effectué, et que le handler `Redémarrer nginx` fonctionne uniquement si le fichier est modifié.
+
+---
+
+## 🧪 Étape 1 – Vérifier le contenu HTML déployé
+
+```bash
+curl http://10.108.0.151
+```
+
+### ✅ Résultat attendu :
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bienvenue</title>
+</head>
+<body>
+  <h1>Bienvenue sur SRV-DEB12</h1>
+  <p>Cette page a été générée automatiquement avec Ansible et un template Jinja2.</p>
+</body>
+</html>
+```
+
+📌 Le nom `SRV-DEB12` vient de la variable `{{ inventory_hostname }}` remplacée dynamiquement dans le template.
+
+---
+
+## 🧪 Étape 2 – Relancer le playbook sans changement
+
+```bash
+ansible-playbook -i ~/ansible/inventory.ini site.yml
+```
+
+### ✅ Résultat attendu :
+
+```
+changed=0
+```
+
+📌 Si le template n’a pas changé, Ansible ne fait rien, et le handler **n’est pas exécuté**.
+
+---
+
+## 🛠️ Étape 3 – Modifier le template pour déclencher le handler
+
+```bash
+nano roles/webserver/templates/index.html.j2
+```
+
+Ajoute une ligne :
+
+```html
+<p>Page générée le {{ ansible_date_time.date }} à {{ ansible_date_time.time }}</p>
+```
+
+---
+
+## ▶️ Étape 4 – Rejouer le playbook
+
+```bash
+ansible-playbook -i ~/ansible/inventory.ini site.yml
+```
+
+### ✅ Résultat attendu :
+
+```
+changed=1
+```
+
+Et le handler `Redémarrer nginx` sera **appelé automatiquement** à la fin.
+
+---
+
+## 🧠 À retenir
+
+- Le handler **ne s’exécute que si la tâche `template` modifie réellement le fichier HTML**.
+- Cela garantit une configuration **propre, optimisée, et idempotente**.
+- C’est une bonne pratique pour tous les services comme `nginx`, `sshd`, `postfix`, etc.
+
+---
+
+## 📘 Références utiles
+
+- https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#handlers
+- https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html
+- https://jinja.palletsprojects.com/en/latest/
+
+
+# 🐳 Cours 20 + TP 21 — Installer Docker avec Ansible
+
+## 🎯 Objectifs
+
+- Utiliser Ansible pour automatiser l'installation de Docker Engine sur une VM
+- Créer un utilisateur `admin_docker`
+- L’ajouter au groupe `docker` pour qu’il puisse exécuter Docker sans sudo
+
+---
+
+## 📦 Étape 1 – Créer un répertoire de projet
+
+```bash
+mkdir -p ~/ansible/projet-5
+cd ~/ansible/projet-5
+```
+
+> On prépare un nouveau dossier pour ce projet Ansible.
+
+---
+
+## 🛠️ Étape 2 – Télécharger le rôle Docker officiel
+
+```bash
+ansible-galaxy install geerlingguy.docker
+```
+
+### 🔍 Explication :
+- Ce rôle est écrit par **Jeff Geerling**, très utilisé et bien maintenu.
+- Il s’installe dans `~/.ansible/roles/geerlingguy.docker`.
+- Il contient tout le nécessaire pour gérer l'installation de Docker sur Debian, Ubuntu, etc.
+
+---
+
+## 📄 Étape 3 – Créer le playbook principal `install_docker.yml`
+
+```bash
+nano install_docker.yml
+```
+
+### 💡 Contenu du fichier :
+
+```yaml
+- name: Créer utilisateur et installer Docker
+  hosts: SRV-DEB12
+  become: yes
+  remote_user: ansible
+
+  vars:
+    docker_users:
+      - admin_docker
+
+  tasks:
+    - name: Créer l'utilisateur admin_docker
+      ansible.builtin.user:
+        name: admin_docker
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Autoriser la clé SSH pour admin_docker
+      ansible.posix.authorized_key:
+        user: admin_docker
+        state: present
+        key: "{{ lookup('file', 'files/id_admin_docker.pub') }}"
+
+  roles:
+    - geerlingguy.docker
+```
+
+### 🔍 Explication :
+- `docker_users` permet à `geerlingguy.docker` d’ajouter `admin_docker` au groupe `docker`
+- Les tâches créent l’utilisateur et injectent la clé SSH avant d’appeler le rôle
+
+## 👤 Étape 4 – Créer manuellement l’utilisateur `admin_docker` et lui installer une clé SSH
+
+Par défaut, le rôle `geerlingguy.docker` peut créer l'utilisateur et l’ajouter au groupe `docker`.
+
+Mais si tu veux **gérer manuellement** la création de l’utilisateur et l'ajout de sa **clé SSH**, voici comment faire :
+
+---
+
+### 📝 1. Ajouter les tâches dans ton playbook (avant la section `roles:`)
+
+```yaml
+  tasks:
+    - name: Créer l'utilisateur admin_docker
+      ansible.builtin.user:
+        name: admin_docker
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Autoriser la clé SSH pour admin_docker
+      ansible.posix.authorized_key:
+        user: admin_docker
+        state: present
+        key: "{{ lookup('file', 'files/id_admin_docker.pub') }}"
+```
+
+---
+
+### 🛠️ 2. Générer la paire de clés SSH sur la machine de contrôle (`SRV-DEB-LXCANSIBLE`)
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/id_admin_docker
+```
+
+Cela crée deux fichiers :
+- `~/.ssh/id_admin_docker` → clé **privée**
+- `~/.ssh/id_admin_docker.pub` → clé **publique**
+
+---
+
+### 📁 3. Ajouter la clé publique dans ton projet Ansible
+
+```bash
+mkdir -p ~/ansible/projet-5/files
+cp ~/.ssh/id_admin_docker.pub ~/ansible/projet-5/files/
+```
+
+---
+
+### ▶️ 4. Lancer le playbook avec inventaire
+
+```bash
+cd ~/ansible/projet-5
+ansible-playbook -i ~/ansible/inventory.ini install_docker.yml
+```
+
+---
+
+### 🔐 5. Tester la connexion SSH avec la nouvelle clé
+
+```bash
+ssh -i ~/.ssh/id_admin_docker admin_docker@10.108.0.151
+```
+
+Tu dois te connecter sans mot de passe.
+
+
+## ▶️ Étape 5 – Lancer le playbook
+
+```bash
+ansible-playbook -i ~/ansible/inventory.ini install_docker.yml
+```
+
+---
+
+## 🔍 Étape 6 – Vérifications après exécution
+
+### Sur la machine distante (SRV-DEB12) :
+
+```bash
+docker info
+docker run hello-world
+getent passwd admin_docker
+groups admin_docker
+```
+
+---
+
+## 🔐 Étape 7 – Ajouter une clé SSH pour l'utilisateur admin_docker
+
+### 🗝️ Générer une paire de clés SSH (sur la machine de contrôle : `SRV-DEB-LXCANSIBLE` connecté avec l’utilisateur `ansible`)
+
+Sur la machine de contrôle (LXC Ansible), connecté en tant que `ansible` :
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/id_admin_docker
+```
+
+Cela crée deux fichiers :
+- `id_admin_docker` : la clé **privée**
+- `id_admin_docker.pub` : la clé **publique**
+
+---
+
+### 📁 Copier la clé publique dans le projet
+
+```bash
+mkdir -p ~/ansible/projet-5/files
+cp ~/.ssh/id_admin_docker.pub ~/ansible/projet-5/files/
+```
+
+---
+
+### 📝 Modifier le playbook pour déployer la clé
+
+```yaml
+- name: Créer utilisateur et installer Docker
+  hosts: SRV-DEB12
+  become: yes
+  remote_user: ansible
+
+  vars:
+    docker_users:
+      - admin_docker
+
+  tasks:
+    - name: Créer l'utilisateur admin_docker
+      ansible.builtin.user:
+        name: admin_docker
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Ajouter la clé SSH pour admin_docker
+      ansible.posix.authorized_key:
+        user: admin_docker
+        state: present
+        key: "{{ lookup('file', 'files/id_admin_docker.pub') }}"
+
+  roles:
+    - geerlingguy.docker
+```
+
+---
+
+### ✅ Tester la connexion SSH
+
+```bash
+ssh -i ~/.ssh/id_admin_docker admin_docker@10.108.0.151
+```
+
+---
+
+## 🧠 Astuce
+
+Tu peux aussi ajouter la clé à l'agent ssh :
+
+```bash
+ssh-add ~/.ssh/id_admin_docker
+```
+
+---
+
+## 📁 Structure du projet
+
+```
+projet-5/
+├── install_docker.yml
+├── inventory.ini
+└── files/
+    └── id_admin_docker.pub
+```
+
+Le rôle `geerlingguy.docker` est installé dans `~/.ansible/roles/`.
+
+---
+
+## 📘 Références utiles
+
+- 🔗 https://galaxy.ansible.com/geerlingguy/docker
+- 📚 https://docs.docker.com/
+- 🧑‍🏫 https://github.com/geerlingguy/ansible-role-docker
