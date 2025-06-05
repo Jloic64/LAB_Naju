@@ -1287,4 +1287,4 @@ Le rôle `geerlingguy.docker` est installé dans `~/.ansible/roles/`.
 
 - 🔗 https://galaxy.ansible.com/geerlingguy/docker
 - 📚 https://docs.docker.com/
-- 🧑‍🏫 https://github.com/geerlingguy/ansible-role-docker
+- 🧑‍🏫 https://github.com/geerlingguy/ansible-role-docker 
