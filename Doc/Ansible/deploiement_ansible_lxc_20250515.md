@@ -1440,3 +1440,295 @@ volumes:
 
 - 🔗 https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html  
 - 🔗 https://hub.docker.com/_/nginx
+
+
+# 🐳 Projet 7 — Déployer Portainer avec Ansible et Docker
+
+## 🎯 Objectif
+
+Déployer l’interface web **Portainer CE** pour gérer les conteneurs Docker à distance, via un **playbook Ansible** utilisant le module `community.docker.docker_container`.
+
+---
+
+## 🧱 Étape 1 – Créer l’environnement de travail
+
+```bash
+mkdir -p ~/ansible/projet-7
+cd ~/ansible/projet-7
+```
+
+---
+
+## 📦 Étape 2 – Installer la collection Docker
+
+```bash
+ansible-galaxy collection install community.docker
+```
+
+Vérifie son installation :
+
+```bash
+ansible-galaxy collection list
+```
+
+---
+
+## 📁 Étape 3 – Créer l’inventaire `hosts.ini`
+
+```bash
+nano hosts.ini
+```
+
+Contenu :
+
+```ini
+[docker_hosts]
+SRV-DEB12 ansible_host=10.108.0.151 ansible_user=ansible
+```
+
+---
+
+## 📄 Étape 4 – Écrire le playbook `deployer_portainer.yml`
+
+```bash
+nano deployer_portainer.yml
+```
+
+Contenu :
+
+```yaml
+- name: Déployer Portainer avec Docker
+  hosts: docker_hosts
+  become: yes
+  collections:
+    - community.docker
+
+  tasks:
+    - name: Créer le volume Docker nommé portainer_data
+      community.docker.docker_volume:
+        name: portainer_data
+
+    - name: Déployer le conteneur Portainer
+      community.docker.docker_container:
+        name: portainer
+        image: portainer/portainer-ce:latest
+        state: started
+        restart_policy: always
+        ports:
+          - "9443:9443"
+          - "9000:9000"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - portainer_data:/data
+```
+
+🧠 Ce que fait ce playbook :
+- Crée un volume persistant `portainer_data`
+- Monte le socket Docker pour le contrôle du démon
+- Expose les ports :
+  - `9000` pour HTTP
+  - `9443` pour HTTPS
+
+---
+
+## ▶️ Étape 5 – Lancer le playbook
+
+```bash
+ansible-playbook -i hosts.ini deployer_portainer.yml -v
+```
+
+---
+
+## 🔍 Étape 6 – Vérification
+
+Accéder à l’interface web :
+
+- 🖥️ HTTP : [http://10.108.0.151:9000](http://10.108.0.151:9000)
+- 🔐 HTTPS : [https://10.108.0.151:9443](https://10.108.0.151:9443)
+
+---
+
+## 🧠 Étape 7 – Configuration initiale
+
+Lors du premier accès à l’interface web :
+
+1. Définir un mot de passe pour l’utilisateur `admin`
+2. Choisir “Docker local” comme environnement à gérer
+3. Tu es prêt à utiliser Portainer 🎉
+
+---
+
+## 📘 Références utiles
+
+- 🔗 https://docs.portainer.io/
+- 🔗 https://hub.docker.com/r/portainer/portainer-ce
+- 🔗 https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html
+
+
+
+# 🐳 Projet 8 — Déployer Kasm Workspaces avec Ansible et Docker Compose
+
+## 🎯 Objectif
+
+Déployer la plateforme **Kasm Workspaces** (édition communautaire) en utilisant **Ansible** et **Docker Compose**, avec persistance des données.
+
+---
+
+## 🧱 Étape 1 – Créer l’environnement de travail
+
+```bash
+mkdir -p ~/ansible/projet-8/templates
+cd ~/ansible/projet-8
+```
+
+---
+
+## 📦 Étape 2 – Installer la collection Docker
+
+```bash
+ansible-galaxy collection install community.docker
+```
+
+Vérifie son installation :
+
+```bash
+ansible-galaxy collection list
+```
+
+---
+
+## 📁 Étape 3 – Créer l’inventaire `hosts.ini`
+
+```bash
+nano hosts.ini
+```
+
+Contenu :
+
+```ini
+[docker_hosts]
+SRV-DEB12 ansible_host=10.108.0.151 ansible_user=ansible
+```
+
+---
+
+## 📄 Étape 4 – Créer le fichier de variables `vars.yml`
+
+```bash
+nano vars.yml
+```
+
+Contenu :
+
+```yaml
+kasm_version: "1.17.0-ls77"
+kasm_data: "/srv/appdata/kasm/data"
+kasm_profiles: "/srv/appdata/kasm/profiles"
+kasm_ports:
+  - "3000:3000"
+  - "443:443"
+```
+
+---
+
+## 📄 Étape 5 – Créer le template `docker-compose.yml.j2`
+
+```bash
+nano templates/docker-compose.yml.j2
+```
+
+Contenu :
+
+```jinja
+version: "3.7"
+services:
+  kasm:
+    image: lscr.io/linuxserver/kasm:{{ kasm_version }}
+    container_name: kasm
+    privileged: true
+    environment:
+      - KASM_PORT=443
+    volumes:
+      - "{{ kasm_data }}:/opt"
+      - "{{ kasm_profiles }}:/profiles"
+    ports:
+{% for p in kasm_ports %}
+      - "{{ p }}"
+{% endfor %}
+    restart: unless-stopped
+```
+
+---
+
+## 📄 Étape 6 – Écrire le playbook `deployer_kasm.yml`
+
+```bash
+nano deployer_kasm.yml
+```
+
+Contenu :
+
+```yaml
+- name: Installer Kasm via docker-compose
+  hosts: docker_hosts
+  become: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Install docker-compose plugin if needed
+      ansible.builtin.shell: |
+        apt-get install -y docker-compose-plugin
+      args:
+        executable: /bin/bash
+
+    - name: Create required host directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ kasm_data }}"
+        - "{{ kasm_profiles }}"
+
+    - name: Deploy docker-compose.yml
+      template:
+        src: templates/docker-compose.yml.j2
+        dest: ~/docker-compose.yml
+
+    - name: Deploy Kasm via docker-compose
+      ansible.builtin.shell: docker compose -f ~/docker-compose.yml up -d
+      args:
+        executable: /bin/bash
+```
+
+---
+
+## ▶️ Étape 7 – Lancer le playbook
+
+```bash
+ansible-playbook -i hosts.ini deployer_kasm.yml -v
+```
+
+---
+
+## 🔍 Étape 8 – Vérification
+
+Accéder à l’interface web Kasm :
+
+- 🔐 [https://10.108.0.151:443](https://10.108.0.151:443)
+- 🧪 Port alternatif : [http://10.108.0.151:3000](http://10.108.0.151:3000)
+
+---
+
+## 🧠 Étape 9 – Informations complémentaires
+
+- Kasm utilise le port 443 pour son interface sécurisée.
+- Le conteneur persiste les données dans `/srv/appdata/kasm` côté hôte.
+
+---
+
+## 📘 Références utiles
+
+- 🔗 https://belginux.com/installer-kasm-avec-docker/
+- 🔗 https://docs.kasmweb.com/
+- 🔗 https://hub.docker.com/r/linuxserver/kasm
