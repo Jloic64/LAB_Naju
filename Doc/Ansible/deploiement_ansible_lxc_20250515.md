@@ -1565,14 +1565,13 @@ Lors du premier accès à l’interface web :
 - 🔗 https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html
 
 
+---
 
 # 🐳 Projet 8 — Déployer Kasm Workspaces avec Ansible et Docker Compose
 
 ## 🎯 Objectif
 
 Déployer la plateforme **Kasm Workspaces** (édition communautaire) en utilisant **Ansible** et **Docker Compose**, avec persistance des données.
-
----
 
 ## 🧱 Étape 1 – Créer l’environnement de travail
 
@@ -1581,21 +1580,17 @@ mkdir -p ~/ansible/projet-8/templates
 cd ~/ansible/projet-8
 ```
 
----
-
 ## 📦 Étape 2 – Installer la collection Docker
 
 ```bash
 ansible-galaxy collection install community.docker
 ```
 
-Vérifie son installation :
+Vérifiez son installation :
 
 ```bash
 ansible-galaxy collection list
 ```
-
----
 
 ## 📁 Étape 3 – Créer l’inventaire `hosts.ini`
 
@@ -1610,8 +1605,6 @@ Contenu :
 SRV-DEB12 ansible_host=10.108.0.151 ansible_user=ansible
 ```
 
----
-
 ## 📄 Étape 4 – Créer le fichier de variables `vars.yml`
 
 ```bash
@@ -1621,15 +1614,18 @@ nano vars.yml
 Contenu :
 
 ```yaml
-kasm_version: "1.17.0-ls77"
+# Note : Nous utilisons la version 1.14.0 car les versions plus récentes
+# de l'image linuxserver/kasm (ex: 1.17.0, latest) présentent un bug
+# au moment de la rédaction de ce document. De plus, le format de tag "-lsXX"
+# est obsolète. Il faut utiliser les numéros de version simples.
+kasm_version: "1.14.0"
+
 kasm_data: "/srv/appdata/kasm/data"
 kasm_profiles: "/srv/appdata/kasm/profiles"
 kasm_ports:
   - "3000:3000"
   - "443:443"
 ```
-
----
 
 ## 📄 Étape 5 – Créer le template `docker-compose.yml.j2`
 
@@ -1639,8 +1635,9 @@ nano templates/docker-compose.yml.j2
 
 Contenu :
 
+> La ligne `version: "3.7"` a été retirée car elle est obsolète dans les versions modernes de Docker Compose.
+
 ```jinja
-version: "3.7"
 services:
   kasm:
     image: lscr.io/linuxserver/kasm:{{ kasm_version }}
@@ -1658,15 +1655,15 @@ services:
     restart: unless-stopped
 ```
 
----
-
-## 📄 Étape 6 – Écrire le playbook `deployer_kasm.yml`
+## 📄 Étape 6 – Écrire le playbook `deployer_kasm.yml` (Version améliorée et idempotente)
 
 ```bash
 nano deployer_kasm.yml
 ```
 
 Contenu :
+
+> Cette version du playbook utilise les modules Ansible dédiés (`apt`, `docker_compose_v2`) au lieu de commandes `shell`. C'est plus propre, plus efficace et **idempotent** (on peut le lancer plusieurs fois sans causer d'erreur).
 
 ```yaml
 - name: Installer Kasm via docker-compose
@@ -1675,14 +1672,15 @@ Contenu :
   vars_files:
     - vars.yml
   tasks:
-    - name: Install docker-compose plugin if needed
-      ansible.builtin.shell: |
-        apt-get install -y docker-compose-plugin
-      args:
-        executable: /bin/bash
+    # Utilise le module 'apt' pour gérer les paquets de manière idempotente
+    - name: Ensure docker-compose-plugin is installed
+      ansible.builtin.apt:
+        name: docker-compose-plugin
+        state: present
+        update_cache: yes
 
     - name: Create required host directories
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: directory
         mode: '0755'
@@ -1690,18 +1688,19 @@ Contenu :
         - "{{ kasm_data }}"
         - "{{ kasm_profiles }}"
 
-    - name: Deploy docker-compose.yml
-      template:
+    # Déploie le fichier compose à côté de ses données, ce qui est plus propre
+    - name: Deploy docker-compose.yml from template
+      ansible.builtin.template:
         src: templates/docker-compose.yml.j2
-        dest: ~/docker-compose.yml
+        dest: /srv/appdata/kasm/docker-compose.yml
+        mode: '0644'
 
+    # Utilise le module docker_compose_v2, la méthode moderne pour gérer les stacks
     - name: Deploy Kasm via docker-compose
-      ansible.builtin.shell: docker compose -f ~/docker-compose.yml up -d
-      args:
-        executable: /bin/bash
+      community.docker.docker_compose_v2:
+        project_src: /srv/appdata/kasm/ # Répertoire contenant le docker-compose.yml
+        state: present # Assure que les services sont démarrés
 ```
-
----
 
 ## ▶️ Étape 7 – Lancer le playbook
 
@@ -1709,26 +1708,34 @@ Contenu :
 ansible-playbook -i hosts.ini deployer_kasm.yml -v
 ```
 
----
-
 ## 🔍 Étape 8 – Vérification
 
-Accéder à l’interface web Kasm :
+Attendez une minute ou deux que Kasm termine son initialisation interne. Accédez ensuite à l’interface web :
 
-- 🔐 [https://10.108.0.151:443](https://10.108.0.151:443)
-- 🧪 Port alternatif : [http://10.108.0.151:3000](http://10.108.0.151:3000)
+- 🔐 **URL principale :** `https://10.108.0.151`
+- 🧪 **Port alternatif :** `http://10.108.0.151:3000`
 
----
+## 🔧 Étape 9 – Dépannage : Comment réinitialiser une installation échouée
 
-## 🧠 Étape 9 – Informations complémentaires
+Si un déploiement échoue et que vous devez recommencer, il est crucial de nettoyer complètement le serveur avant de relancer le playbook.
 
-- Kasm utilise le port 443 pour son interface sécurisée.
-- Le conteneur persiste les données dans `/srv/appdata/kasm` côté hôte.
-
----
+1.  **Connectez-vous au serveur Docker (`SRV-DEB12`) :**
+    ```bash
+    ssh ansible@10.108.0.151
+    ```
+2.  **Arrêtez et supprimez le conteneur défectueux :**
+    ```bash
+    docker stop kasm
+    docker rm kasm
+    ```
+3.  **Supprimez toutes les données persistantes :**
+    ```bash
+    sudo rm -rf /srv/appdata/kasm/data
+    sudo rm -rf /srv/appdata/kasm/profiles
+    ```
+4.  Vous pouvez maintenant relancer le playbook Ansible depuis votre machine de contrôle.
 
 ## 📘 Références utiles
 
-- 🔗 https://belginux.com/installer-kasm-avec-docker/
-- 🔗 https://docs.kasmweb.com/
-- 🔗 https://hub.docker.com/r/linuxserver/kasm
+- 🔗 [Docker Hub - linuxserver/kasm](https://hub.docker.com/r/linuxserver/kasm/tags) (Pour vérifier les tags de version disponibles)
+- 🔗 [Documentation Officielle Kasm](https://docs.kasmweb.com/)
