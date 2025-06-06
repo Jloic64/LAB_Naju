@@ -1288,3 +1288,155 @@ Le rôle `geerlingguy.docker` est installé dans `~/.ansible/roles/`.
 - 🔗 https://galaxy.ansible.com/geerlingguy/docker
 - 📚 https://docs.docker.com/
 - 🧑‍🏫 https://github.com/geerlingguy/ansible-role-docker 
+
+# 🐳 TD 23 : Déployer un conteneur Docker avec Ansible
+
+## 🎯 Objectif
+
+Déployer un conteneur **Nginx** sur la machine cible `SRV-DEB12` à l’aide d’un **playbook Ansible**, en s’appuyant sur la collection `community.docker`.
+
+---
+
+## 🧱 Étape 1 – Créer l’environnement de travail
+
+```bash
+mkdir -p ~/ansible/projet-6
+cd ~/ansible/projet-6
+```
+
+---
+
+## 📦 Étape 2 – Installer la collection `community.docker`
+
+```bash
+ansible-galaxy collection install community.docker
+```
+
+💡 Vérifie qu’elle est bien installée :
+
+```bash
+ansible-galaxy collection list
+```
+
+---
+
+## 📁 Étape 3 – Créer le fichier d’inventaire `hosts.ini`
+
+```bash
+nano hosts.ini
+```
+
+Et insérer :
+
+```ini
+[docker_hosts]
+SRV-DEB12 ansible_host=10.108.0.151 ansible_user=ansible
+```
+
+🔎 Remplace l’IP si nécessaire.
+
+---
+
+## ✅ Étape 4 – Vérifier la connectivité SSH
+
+```bash
+ansible -i hosts.ini docker_hosts -m ping
+```
+
+Résultat attendu :
+
+```json
+SRV-DEB12 | SUCCESS => { "ping": "pong" }
+```
+
+---
+
+## 📄 Étape 5 – Créer le playbook `deployer_conteneur_nginx.yml`
+
+```bash
+nano deployer_conteneur_nginx.yml
+```
+
+Contenu du playbook :
+
+```yaml
+- name: Lancer un conteneur Nginx avec Ansible
+  hosts: docker_hosts
+  become: yes
+  collections:
+    - community.docker
+
+  tasks:
+    - name: Lancer un conteneur Nginx
+      community.docker.docker_container:
+        name: my_nginx
+        image: nginx:latest
+        state: started
+        ports:
+          - "8080:80"
+        env:
+          NGINX_HOST: "localhost"
+          NGINX_PORT: "8080"
+```
+
+🧠 Explication :
+- Le conteneur s’appelle `my_nginx`
+- Le port 8080 de la machine cible est redirigé vers le port 80 du conteneur
+- L’image utilisée est `nginx:latest`
+
+---
+
+## ▶️ Étape 6 – Exécuter le playbook
+
+```bash
+ansible-playbook -i hosts.ini deployer_conteneur_nginx.yml -v
+```
+
+---
+
+## 🔍 Étape 7 – Vérifier que le conteneur fonctionne
+
+### ✅ Option 1 – En ligne de commande :
+
+```bash
+curl http://10.108.0.151:8080
+```
+
+Tu dois voir le HTML de la page d’accueil Nginx :  
+```html
+<h1>Welcome to nginx!</h1>
+```
+
+### ✅ Option 2 – Depuis ton navigateur :
+
+Accède à :  
+[http://10.108.0.151:8080](http://10.108.0.151:8080)
+
+---
+
+## 🧠 Pour aller plus loin
+
+- Utiliser `state: stopped` ou `absent` pour arrêter ou supprimer le conteneur :
+
+```yaml
+- name: Supprimer le conteneur
+  community.docker.docker_container:
+    name: my_nginx
+    state: absent
+```
+
+- Ajouter des volumes :
+
+```yaml
+volumes:
+  - "/srv/nginx_data:/usr/share/nginx/html"
+```
+
+- Gérer plusieurs conteneurs dans un rôle ou un playbook complet
+
+---
+
+## 📘 Références utiles
+
+- 🔗 https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html  
+- 🔗 https://hub.docker.com/_/nginx
