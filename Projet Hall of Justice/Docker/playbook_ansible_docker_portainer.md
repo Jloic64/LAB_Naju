@@ -1,3 +1,4 @@
+```bash
 runuser -u ansible -- bash -lc '
 mkdir -p ~/ansible && cd ~/ansible
 cat > install_docker_portainer.yml << "YML"
@@ -57,7 +58,6 @@ cat > install_docker_portainer.yml << "YML"
           - docker-ce
           - docker-ce-cli
           - containerd.io
-          # - docker-compose-plugin   # décommente si tu veux aussi docker compose
         state: present
 
     - name: Activer + démarrer Docker
@@ -91,3 +91,4 @@ cat > install_docker_portainer.yml << "YML"
         msg: "Portainer dispo sur http://{{ ansible_host }}:{{ portainer_port }}"
 YML
 '
+```
