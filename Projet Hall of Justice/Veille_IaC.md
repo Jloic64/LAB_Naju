@@ -75,7 +75,7 @@ L’Infrastructure as Code (IaC) est une approche permettant de **provisionner, 
 
 ##  Choix selon les cas d’usage
 
-|  Besoin principal                                                                 | 🛠️ Outil recommandé      |
+|  Besoin principal                                                                 | Outil recommandé      |
 |------------------------------------------------------------------------------------|---------------------------|
 | Créer une infrastructure Cloud ou on-premise (VM, réseau, stockage)               | Terraform                 |
 | Configurer le système, installer des services (Docker, Nginx, PostgreSQL…)        | Ansible                   |
