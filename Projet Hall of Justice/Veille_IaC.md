@@ -13,7 +13,7 @@ L’Infrastructure as Code (IaC) est une approche permettant de **provisionner, 
 
 ---
 
-##Comparaison des principaux outils IaC
+## Comparaison des principaux outils IaC
 
 |  Outil     | Catégorie                     | Langage           | Agent requis | Mode         |
 |--------------|-------------------------------|-------------------|--------------|--------------|
