@@ -50,7 +50,7 @@ L’Infrastructure as Code (IaC) est une approche permettant de **provisionner, 
 
 ---
 
-###Puppet
+### Puppet
 
 **Avantages :**
 - Très robuste pour grands parcs serveurs
