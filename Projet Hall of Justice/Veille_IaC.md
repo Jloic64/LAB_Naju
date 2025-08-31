@@ -39,7 +39,7 @@ L’Infrastructure as Code (IaC) est une approche permettant de **provisionner, 
 ---
 
 ### Ansible
-** Avantages :**
+**Avantages :**
 - Simple à prendre en main (YAML, pas d’agent)
 - Idempotent, parfait pour la configuration logicielle
 - Installation via SSH ou WinRM
@@ -51,6 +51,7 @@ L’Infrastructure as Code (IaC) est une approche permettant de **provisionner, 
 ---
 
 ###Puppet
+
 **Avantages :**
 - Très robuste pour grands parcs serveurs
 - Détection/remédiation automatique des écarts
